@@ -1,12 +1,12 @@
 # UNQfy
-##Materia: 
+## Materia: 
 Seminario de desarrollo de servicios web/cloud modernos. 
 
-##Profesores:
+## Profesores:
 
 - Lautaro Woites 
 - Arturo Zambrano
 
-##Alumnos: 
+## Alumnos: 
 - Antonella Baselo
 - Svrznjak Spinelli Francisco
