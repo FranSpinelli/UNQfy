@@ -1,2 +1,12 @@
 # UNQfy
-Proyecto realizado para la materia seminario de desarrollo de servicios web - Universidad Nacional de Quilmes
+##Materia: 
+Seminario de desarrollo de servicios web/cloud modernos. 
+
+##Profesores:
+
+- Lautaro Woites 
+- Arturo Zambrano
+
+##Alumnos: 
+- Antonella Baselo
+- Svrznjak Spinelli Francisco
