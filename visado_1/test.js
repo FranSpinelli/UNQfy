@@ -6,6 +6,7 @@ const Track = require('./track');
 const Album = require('./Album');
 const Artista = require('./Artista');
 const Database = require('./Database');
+const Buscador = require('./Buscador');
 
 function createAndAddArtist(unqfy, artistName, country) {
   const artist = unqfy.addArtist({ name: artistName, country });
@@ -334,5 +335,98 @@ describe('Database tests', () => {
     assert.equal(claveDeArtista, 1);
     assert.equal(claveDeArtista2, 2);
 
+  })
+})
+
+describe('Buscador tests', () => {
+  let listaDeArtistas;
+  let artista1;
+  let artista2;
+  let album1;
+  let album2;
+  let album3;
+  let album4;
+  let track1;
+  let track2;
+  let track3;
+  let track4;
+  let track5;
+  let track6;
+  let track7;
+  let track8;
+
+  beforeEach(() => {
+    listaDeArtistas = []
+    artista1 =  new Artista("fran", 1998, 1);
+    artista2 =  new Artista("anto", 1998, 2);
+    album1 = new Album("album 1", 2004, 1);
+    album2 = new Album("album 2", 2004, 2);
+    album3 = new Album("album 3", 2004, 3);
+    album4 = new Album("album 4", 2004, 4);
+    track1 = new Track("cancion 1", ["genero1"], 500, album1, 1);
+    track2 = new Track("cancion 2", ["genero2"], 500, album1, 2);
+    track3 = new Track("cancion 3", ["genero3"], 500, album2, 3);
+    track4 = new Track("cancion 4", ["genero4"], 500, album2, 4);
+    track5 = new Track("cancion 1b", ["genero5"], 500, album3, 5);
+    track6 = new Track("cancion 2b", ["genero6"], 500, album3, 6);
+    track7 = new Track("cancion 3b", ["genero7"], 500, album4, 7);
+    track8 = new Track("cancion 4b", ["genero8"], 500, album4, 8);
+    buscador = new Buscador();
+
+    album1.agregarTrack(track1);
+    album1.agregarTrack(track2);
+
+    album2.agregarTrack(track3);
+    album2.agregarTrack(track4);
+
+    album3.agregarTrack(track5);
+    album3.agregarTrack(track6);
+
+    album4.agregarTrack(track7);
+    album4.agregarTrack(track8);
+
+    artista1.agregarAlbum(album1);
+    artista1.agregarAlbum(album2);
+
+    artista2.agregarAlbum(album3);
+    artista2.agregarAlbum(album4);
+    listaDeArtistas.push(artista1);
+    listaDeArtistas.push(artista2);
+   })
+
+  it('un buscador puede hacer busquedas parciales de tracks', () => {
+    
+    let busquedaParcial1 =  buscador.getTracksConTitulo("cancion", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 8);
+
+    busquedaParcial1 =  buscador.getTracksConTitulo("4", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 2);
+
+    busquedaParcial1 =  buscador.getTracksConTitulo("Cancion", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 8);
+  })
+
+  it('un buscador puede hacer busquedas parciales de albums', () => {
+    
+    let busquedaParcial1 =  buscador.getAlbumsConNombre("album", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 4);
+
+    busquedaParcial1 =  buscador.getAlbumsConNombre("4", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 1);
+
+    busquedaParcial1 =  buscador.getAlbumsConNombre("AlBum", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 4);
+  })
+
+  it('un buscador puede hacer busquedas parciales de Artistas', () => {
+    
+    let busquedaParcial1 =  buscador.getArtistasConNombre("fran", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 1);
+
+    busquedaParcial1 =  buscador.getArtistasConNombre("a", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 2);
+
+    busquedaParcial1 =  buscador.getArtistasConNombre("FRan", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 1);
   })
 })
