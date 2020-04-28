@@ -1,9 +1,12 @@
+const Buscador = require('./Buscador');
+
 class Database{
 
     constructor(){
 
         this._artistas = [];
         this._generadorDeClaves = new GeneradorDeClaves();
+        this._buscador = new Buscador();
     }
 
     get artistas(){return this._artistas;}
@@ -25,6 +28,10 @@ class Database{
     generarClaveDeTrack(){return this._generadorDeClaves.generarClaveDeTrack();}
     generarClaveDeAlbum(){return this._generadorDeClaves.generarClaveDeAlbum();}
     generarClaveDeArtista(){return this._generadorDeClaves.generarClaveDeArtista();}
+
+    getTracksConTitulo(unTitulo){return this._buscador.getTracksConTitulo(unTitulo, this._artistas);}
+    getAlbumsConNombre(unNombre){return this._buscador.getAlbumsConNombre(unNombre, this._artistas);}
+    getArtistasConNombre(unNombre){return this._buscador.getArtistasConNombre(unNombre, this._artistas);}
 }
 
 class GeneradorDeClaves{
