@@ -17,6 +17,18 @@ class Buscador{
         return listaDeArtistasDelSistema.filter(artista => artista.nombre.toLowerCase().includes(unNombre.toLowerCase()));
     }
 
+    getTracksDeArtistaConNombre(unNombre, listaDeArtistasDelSistema){
+        let albumsDelArtista = this.getAlbumsDelSistema(listaDeArtistasDelSistema).filter( 
+            album => album.autor.nombre.toLowerCase().includes(unNombre.toLowerCase()));
+
+        return albumsDelArtista.map( album => album.tracks).flat();
+    }
+
+    getTracksDelGenero(unGenero, listaDeArtistasDelSistema){
+        return this.getTracksDelSistema(listaDeArtistasDelSistema).filter( 
+            track => track.generosMusicales.some( genero => genero.toLowerCase().includes(unGenero.toLowerCase())))
+    }
+
     getAlbumsDelSistema(listaDeArtistasDelSistema){
         return listaDeArtistasDelSistema.map( artista => artista.albums).flat();
     }

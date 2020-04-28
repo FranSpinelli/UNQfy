@@ -7,6 +7,7 @@ const Album = require('./Album');
 const Artista = require('./Artista');
 const Database = require('./Database');
 const Buscador = require('./Buscador');
+const GeneradorDeClaves = require('./GeneradorDeClaves');
 
 function createAndAddArtist(unqfy, artistName, country) {
   const artist = unqfy.addArtist({ name: artistName, country });
@@ -176,9 +177,11 @@ describe('Album tests', () => {
   let album = null;
   let track1 = null;
   let track2 = null;
+  let artista = null;
 
   beforeEach(() => {
-    album = new Album("unNombre", 1978,0)
+    artista = new Artista("unNombre", 1968,0);
+    album = new Album("unNombre", 1978,0, artista)
     track1 = new Track("unTitulo", ["genero1", "genero2"], 100, album,0);
     track2 = new Track("otroTitulo", ["genero3", "genero4"], 200, album,1);
   })
@@ -189,6 +192,7 @@ describe('Album tests', () => {
     assert.equal(album.añoDeLanzamiento, 1978);
     assert.equal(album.tracks.length, 0);
     assert.equal(album.id, 0);
+    assert.equal(album.autor.nombre, "unNombre")
   })
   
   it('un album no tiene tracks repetidos', () => {
@@ -237,8 +241,8 @@ describe('Artist tests', () => {
 
   beforeEach(() => {
     artista = new Artista("unNombre", 1968,0);
-    album = new Album("unNombre", 1978,0);
-    album2 = new Album("otroNombre", 1978,1);
+    album = new Album("unNombre", 1978,0, artista);
+    album2 = new Album("otroNombre", 1978,1, artista);
   })
 
   it('chequeo de constructor y getters', () => { 
@@ -318,15 +322,19 @@ describe('Database tests', () => {
     database.eliminarArtista("fran");
     assert.equal(database.artistas.length, 0);
   })
+})
 
-  it('una database puede generar id para artistas, albums y tracks', () => {
+describe('GeneradorDeClaves tests', () => {
 
-    claveDeTrack = database.generarClaveDeTrack();
-    claveDeTrack2 = database.generarClaveDeTrack();
-    claveDeAlbum = database.generarClaveDeAlbum();
-    claveDeAlbum2 = database.generarClaveDeAlbum();
-    claveDeArtista = database.generarClaveDeArtista();
-    claveDeArtista2 = database.generarClaveDeArtista();
+    it('un GeneradorDeClaves puede generar id para artistas, albums y tracks', () => {
+
+    const generadorDeClaves= new GeneradorDeClaves();
+    claveDeTrack = generadorDeClaves.generarClaveDeTrack();
+    claveDeTrack2 = generadorDeClaves.generarClaveDeTrack();
+    claveDeAlbum = generadorDeClaves.generarClaveDeAlbum();
+    claveDeAlbum2 = generadorDeClaves.generarClaveDeAlbum();
+    claveDeArtista = generadorDeClaves.generarClaveDeArtista();
+    claveDeArtista2 = generadorDeClaves.generarClaveDeArtista();
 
     assert.equal(claveDeTrack, 1);
     assert.equal(claveDeTrack2, 2);
@@ -359,18 +367,18 @@ describe('Buscador tests', () => {
     listaDeArtistas = []
     artista1 =  new Artista("fran", 1998, 1);
     artista2 =  new Artista("anto", 1998, 2);
-    album1 = new Album("album 1", 2004, 1);
-    album2 = new Album("album 2", 2004, 2);
-    album3 = new Album("album 3", 2004, 3);
-    album4 = new Album("album 4", 2004, 4);
+    album1 = new Album("album 1", 2004, 1, artista1);
+    album2 = new Album("album 2", 2004, 2, artista1);
+    album3 = new Album("album 3", 2004, 3, artista2);
+    album4 = new Album("album 4", 2004, 4, artista2);
     track1 = new Track("cancion 1", ["genero1"], 500, album1, 1);
     track2 = new Track("cancion 2", ["genero2"], 500, album1, 2);
     track3 = new Track("cancion 3", ["genero3"], 500, album2, 3);
     track4 = new Track("cancion 4", ["genero4"], 500, album2, 4);
-    track5 = new Track("cancion 1b", ["genero5"], 500, album3, 5);
-    track6 = new Track("cancion 2b", ["genero6"], 500, album3, 6);
-    track7 = new Track("cancion 3b", ["genero7"], 500, album4, 7);
-    track8 = new Track("cancion 4b", ["genero8"], 500, album4, 8);
+    track5 = new Track("cancion 1b", ["genero1"], 500, album3, 5);
+    track6 = new Track("cancion 2b", ["genero2"], 500, album3, 6);
+    track7 = new Track("cancion 3b", ["genero3"], 500, album4, 7);
+    track8 = new Track("cancion 4b", ["genero4"], 500, album4, 8);
     buscador = new Buscador();
 
     album1.agregarTrack(track1);
@@ -428,5 +436,21 @@ describe('Buscador tests', () => {
 
     busquedaParcial1 =  buscador.getArtistasConNombre("FRan", listaDeArtistas);
     assert.equal(busquedaParcial1.length, 1);
+  })
+
+  it('un buscador puede buscar todas las tracks de un Artista, por busqueda parcial', () => {
+    
+    let busquedaParcial1 =  buscador.getTracksDeArtistaConNombre("fran", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 4);
+
+    assert.equal(busquedaParcial1[0].titulo, "cancion 1")
+    assert.equal(busquedaParcial1[1].titulo, "cancion 2")
+  })
+
+
+  it('un buscador puede buscar todas las tracks de determinado genero, por busqueda parcial', () => {
+    
+    let busquedaParcial1 =  buscador.getTracksDelGenero("genero1", listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 2);
   })
 })
