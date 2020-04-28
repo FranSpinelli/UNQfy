@@ -5,6 +5,7 @@ const libunqfy = require('./unqfy');
 const Track = require('./track');
 const Album = require('./Album');
 const Artista = require('./Artista');
+const Database = require('./Database');
 
 function createAndAddArtist(unqfy, artistName, country) {
   const artist = unqfy.addArtist({ name: artistName, country });
@@ -155,7 +156,7 @@ describe('Track tests', () => {
 
   beforeEach(() => {
     album = new Album("unNombre", 1978)
-    track = new Track("unTitulo", ["genero1", "genero2"], 100, album);
+    track = new Track("unTitulo", ["genero1", "genero2"], 100, album, 1);
   })
 
   it('chequeo de constructor y getters', () => {
@@ -165,6 +166,7 @@ describe('Track tests', () => {
     assert.equal(track.generosMusicales[1], "genero2");
     assert.equal(track.duracion, 100);
     assert.equal(track.albumAlquePertenece.nombre, "unNombre");
+    assert.equal(track.id, 1);
   })
 
 });
@@ -175,15 +177,17 @@ describe('Album tests', () => {
   let track2 = null;
 
   beforeEach(() => {
-    album = new Album("unNombre", 1978)
-    track1 = new Track("unTitulo", ["genero1", "genero2"], 100, album);
-    track2 = new Track("otroTitulo", ["genero3", "genero4"], 200, album);
+    album = new Album("unNombre", 1978,0)
+    track1 = new Track("unTitulo", ["genero1", "genero2"], 100, album,0);
+    track2 = new Track("otroTitulo", ["genero3", "genero4"], 200, album,1);
   })
 
   it('chequeo de constructor y getters', () => {
     
     assert.equal(album.nombre, "unNombre");
     assert.equal(album.añoDeLanzamiento, 1978);
+    assert.equal(album.tracks.length, 0);
+    assert.equal(album.id, 0);
   })
   
   it('un album no tiene tracks repetidos', () => {
@@ -192,6 +196,16 @@ describe('Album tests', () => {
     assert.equal(album.tracks.length, 1);
 
     album.agregarTrack(track1);
+    assert.equal(album.tracks.length, 1);
+  })
+
+  it('un album no tiene 2 tracks con mismo nombre', () => {
+    const track3 = new Track("unTitulo", ["genero5", "genero6"], 300, album,2);
+
+    album.agregarTrack(track1);
+    assert.equal(album.tracks.length, 1);
+
+    album.agregarTrack(track3);
     assert.equal(album.tracks.length, 1);
   })
 
@@ -216,40 +230,109 @@ describe('Album tests', () => {
 
 })
 
-describe('Album tests', () => {
+describe('Artist tests', () => {
   let album = null;
-  let track1 = null;
-  let track2 = null;
   let artista = null;
 
   beforeEach(() => {
-    artista = new Artista("unNombre", 1968);
-    album = new Album("unNombre", 1978);
-    album2 = new Album("otroNombre", 1978)
+    artista = new Artista("unNombre", 1968,0);
+    album = new Album("unNombre", 1978,0);
+    album2 = new Album("otroNombre", 1978,1);
   })
 
   it('chequeo de constructor y getters', () => { 
     
     assert.equal(artista.nombre, "unNombre");
     assert.equal(artista.añoDeNacimiento, 1968);
+    assert.equal(artista.albums.length, 0);
+    assert.equal(artista.id, 0);
   })
 
-  it('un artista no tiene albumes repetidos', () => {
+  it('un artista no tiene albums repetidos', () => {
     
     artista.agregarAlbum(album);
-    assert.equal(artista.albumes.length, 1);
+    assert.equal(artista.albums.length, 1);
 
     artista.agregarAlbum(album);
-    assert.equal(artista.albumes.length, 1);
+    assert.equal(artista.albums.length, 1);
   })
 
-  it('un artista puede eliminar albumes', () => {
+  it('un artista no tiene 2 albums con el mismo nombre', () => {
+    const album3 = new Album("unNombre", 1988,2);
+
+    artista.agregarAlbum(album);
+    assert.equal(artista.albums.length, 1);
+
+    artista.agregarAlbum(album3);
+    assert.equal(artista.albums.length, 1);
+  })
+
+  it('un artista puede eliminar albums', () => {
     
     artista.agregarAlbum(album);
-    assert.equal(artista.albumes.length, 1);
+    assert.equal(artista.albums.length, 1);
     artista.eliminarAlbum("unNombre1");
-    assert.equal(artista.albumes.length, 1);
+    assert.equal(artista.albums.length, 1);
     artista.eliminarAlbum("unNombre");
-    assert.equal(artista.albumes.length, 0);
+    assert.equal(artista.albums.length, 0);
+  })
+
+})
+
+describe('Database tests', () => {
+  let database;
+  let artista1;
+  let artista2;
+
+  beforeEach(() => {
+   database = new Database();
+   artista1 = new Artista("fran", 1998, 0);
+   artista2 = new Artista("anto", 1998, 1);
+  })
+
+  it('una database no puede tener 2 artistas con el mismo nombre', () => {
+    const artista3 = new Artista("fran", 1988,2);
+
+    database.agregarArtista(artista1);
+    assert.equal(database.artistas.length, 1);
+
+    database.agregarArtista(artista3);
+    assert.equal(database.artistas.length, 1);
+  })
+
+  it('una database no puede tener 2 artistas iguales', () => {
+
+    database.agregarArtista(artista1);
+    assert.equal(database.artistas.length, 1);
+
+    database.agregarArtista(artista1);
+    assert.equal(database.artistas.length, 1);
+  })
+
+  it('una database puede eliminar un artista', () => {
+
+    database.agregarArtista(artista1);
+    assert.equal(database.artistas.length, 1);
+
+    database.eliminarArtista("fran");
+    assert.equal(database.artistas.length, 0);
+  })
+
+  it('una database puede generar id para artistas, albums y tracks', () => {
+
+    claveDeTrack = database.generarClaveDeTrack();
+    claveDeTrack2 = database.generarClaveDeTrack();
+    claveDeAlbum = database.generarClaveDeAlbum();
+    claveDeAlbum2 = database.generarClaveDeAlbum();
+    claveDeArtista = database.generarClaveDeArtista();
+    claveDeArtista2 = database.generarClaveDeArtista();
+
+    assert.equal(claveDeTrack, 1);
+    assert.equal(claveDeTrack2, 2);
+    assert.equal(claveDeAlbum, 1);
+    assert.equal(claveDeAlbum2, 2);
+    assert.equal(claveDeArtista, 1);
+    assert.equal(claveDeArtista2, 2);
+
   })
 })
