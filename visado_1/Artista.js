@@ -1,15 +1,17 @@
 class Artista{
 
-    constructor(unNombre, unAñoDeNacimiento, unID){
+    constructor(unNombre, unAñoDeNacimiento, unPais, unID){
 
         this._nombre = unNombre;
         this._añoDeNacimiento = unAñoDeNacimiento;
+        this._pais = unPais;
         this._albums = [];
         this._id = unID;
     }
 
     get nombre(){return this._nombre;}
     get añoDeNacimiento(){return this._añoDeNacimiento;}
+    get pais(){return this._pais;}
     get albums(){return this._albums;}
     get id(){return this._id;}
 

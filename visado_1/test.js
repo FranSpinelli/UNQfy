@@ -33,8 +33,8 @@ describe('Add, remove and filter data', () => {
   it('should add an artist', () => {
     const artist = createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
 
-    assert.equal(artist.name, 'Guns n\' Roses');
-    assert.equal(artist.country, 'USA');
+    assert.equal(artist.nombre, 'Guns n\' Roses');
+    assert.equal(artist.pais, 'USA');
 
   });
 
@@ -42,8 +42,8 @@ describe('Add, remove and filter data', () => {
     const artist = createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
     const album = createAndAddAlbum(unqfy, artist.id, 'Appetite for Destruction', 1987);
 
-    assert.equal(album.name, 'Appetite for Destruction');
-    assert.equal(album.year, 1987);
+    assert.equal(album.nombre, 'Appetite for Destruction');
+    assert.equal(album.añoDeLanzamiento, 1987);
   });
 
   it('should add a track to an album', () => {
@@ -51,11 +51,11 @@ describe('Add, remove and filter data', () => {
     const album = createAndAddAlbum(unqfy, artist.id, 'Appetite for Destruction', 1987);
     const track = createAndAddTrack(unqfy, album.id, 'Welcome to the jungle', 200, ['rock', 'hard rock']);
 
-    assert.equal(track.name, 'Welcome to the jungle');
-    assert.strictEqual(track.duration, 200);
-    assert.equal(track.genres.includes('rock'), true);
-    assert.equal(track.genres.includes('hard rock'), true);
-    assert.lengthOf(track.genres, 2);
+    assert.equal(track.titulo, 'Welcome to the jungle');
+    assert.strictEqual(track.duracion, 200);
+    assert.equal(track.generosMusicales.includes('rock'), true);
+    assert.equal(track.generosMusicales.includes('hard rock'), true);
+    assert.lengthOf(track.generosMusicales, 2);
   });
 
   it('should find different things by name', () => {
@@ -214,15 +214,6 @@ describe('Album tests', () => {
     assert.equal(album.tracks.length, 1);
   })
 
-  it('test de relacion circular', () => {
-    
-    album.agregarTrack(track1);
-    album.agregarTrack(track2);
-    assert.equal(album.tracks.length, 2);
-
-    assert.equal(album.tracks[0].albumAlquePertenece.tracks.length, 2)
-  })
-
   it('un album puede eliminar tracks', () => {
     
     album.agregarTrack(track1);
@@ -240,7 +231,7 @@ describe('Artist tests', () => {
   let artista = null;
 
   beforeEach(() => {
-    artista = new Artista("unNombre", 1968,0);
+    artista = new Artista("unNombre", 1968, "Argentina",0);
     album = new Album("unNombre", 1978,0, artista);
     album2 = new Album("otroNombre", 1978,1, artista);
   })

@@ -2,19 +2,33 @@
 const picklify = require('picklify'); // para cargar/guarfar unqfy
 const fs = require('fs'); // para cargar/guarfar unqfy
 
+const Artista = require('./Artista');
+const Album = require('./Album');
+const Track = require('./track');
+const Database = require('./Database');
+const GeneradorDeClaves = require('./GeneradorDeClaves');
+const Buscador = require('./Buscador');
+
 
 class UNQfy {
+
+  constructor(){
+    this._database = new Database();
+    this._generadorDeClaves = new GeneradorDeClaves();
+    this._buscador = new Buscador();
+  }
 
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
   addArtist(artistData) {
-  /* Crea un artista y lo agrega a unqfy.
-  El objeto artista creado debe soportar (al menos):
-    - una propiedad name (string)
-    - una propiedad country (string)
-  */
+    if(this._database.noHayArtistaConElMismoNombre(artistData.name)){
+      let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
+      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, artistData.country, nuevoID)
+      this._database.agregarArtista(nuevoArtista);
+      return nuevoArtista;
+    }
   }
 
 
@@ -23,11 +37,13 @@ class UNQfy {
   //   albumData.year (number)
   // retorna: el nuevo album creado
   addAlbum(artistId, albumData) {
-  /* Crea un album y lo agrega al artista con id artistId.
-    El objeto album creado debe tener (al menos):
-     - una propiedad name (string)
-     - una propiedad year (number)
-  */
+    let artistaConID = this._buscador.getArtistaConID(artistId, this._database.artistas);
+    if(artistaConID !== undefined){
+      let nuevoID = this._generadorDeClaves.generarClaveDeAlbum();
+      let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
+      artistaConID.agregarAlbum(nuevoAlbum);
+      return nuevoAlbum;
+    }
   }
 
 
@@ -37,24 +53,25 @@ class UNQfy {
   //   trackData.genres (lista de strings)
   // retorna: el nuevo track creado
   addTrack(albumId, trackData) {
-  /* Crea un track y lo agrega al album con id albumId.
-  El objeto track creado debe tener (al menos):
-      - una propiedad name (string),
-      - una propiedad duration (number),
-      - una propiedad genres (lista de strings)
-  */
+    let albumConID = this._buscador.getAlbumConID(albumId, this._database.artistas);
+    if(albumConID !== undefined){
+      let nuevoID = this._generadorDeClaves.generarClaveDeTrack();
+      let nuevoTrack = new Track(trackData.name, trackData.genres, trackData.duration, albumConID, nuevoID);
+      albumConID.agregarTrack(nuevoTrack);
+      return nuevoTrack;
+    }
   }
 
   getArtistById(id) {
-
+    return this._buscador.getArtistaConID(id, this._database.artistas);
   }
 
   getAlbumById(id) {
-
+    return this._buscador.getAlbumConID(id, this._database.artistas);
   }
 
   getTrackById(id) {
-
+    return this._buscador.getTrackConID(id, this._database.artistas);
   }
 
   getPlaylistById(id) {
@@ -64,13 +81,17 @@ class UNQfy {
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
   getTracksMatchingGenres(genres) {
-
+    let resultadoFinal = [];
+    genres.forEach(genero => {
+      resultadoFinal = resultadoFinal.concat(this._buscador.getTracksDelGenero(genero, this._database.artistas));
+    });
+    return resultadoFinal;
   }
 
   // artistName: nombre de artista(string)
   // retorna: los tracks interpredatos por el artista con nombre artistName
   getTracksMatchingArtist(artistName) {
-
+    return this._buscador.getTracksDeArtistaConNombre(artistName, this._database.artistas);
   }
 
 
