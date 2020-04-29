@@ -356,8 +356,8 @@ describe('Buscador tests', () => {
 
   beforeEach(() => {
     listaDeArtistas = []
-    artista1 =  new Artista("fran", 1998, 1);
-    artista2 =  new Artista("anto", 1998, 2);
+    artista1 =  new Artista("fran", 1998, "argentina", 1);
+    artista2 =  new Artista("anto", 1998, "argentina",2);
     album1 = new Album("album 1", 2004, 1, artista1);
     album2 = new Album("album 2", 2004, 2, artista1);
     album3 = new Album("album 3", 2004, 3, artista2);
@@ -443,5 +443,16 @@ describe('Buscador tests', () => {
     
     let busquedaParcial1 =  buscador.getTracksDelGenero("genero1", listaDeArtistas);
     assert.equal(busquedaParcial1.length, 2);
+  })
+
+  it('un buscador puede hacer busquedas exactas por id de Tracks/Albums/Artistas', () => {
+    
+    let busquedaExacta1 = buscador.getArtistaConID(1, listaDeArtistas);
+    let busquedaExacta2 = buscador.getAlbumConID(2, listaDeArtistas);
+    let busquedaExacta3 = buscador.getTrackConID(3, listaDeArtistas);
+
+    assert.equal(busquedaExacta1.nombre, "fran");
+    assert.equal(busquedaExacta2.nombre, "album 2");
+    assert.equal(busquedaExacta3.titulo, "cancion 3");
   })
 })

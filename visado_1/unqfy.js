@@ -78,6 +78,15 @@ class UNQfy {
 
   }
 
+  searchByName(aName){
+    let dictionary = {
+      artists: this._buscador.getArtistasConNombre(aName, this._database.artistas),
+      albums: this._buscador.getAlbumsConNombre(aName, this._database.artistas),
+      tracks: this._buscador.getTracksConTitulo(aName, this._database.artistas),
+      //playlists: , agregar metodo correspondiente
+    }
+  }
+
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
   getTracksMatchingGenres(genres) {
@@ -85,7 +94,7 @@ class UNQfy {
     genres.forEach(genero => {
       resultadoFinal = resultadoFinal.concat(this._buscador.getTracksDelGenero(genero, this._database.artistas));
     });
-    return resultadoFinal;
+    return [...new Set(resultadoFinal)];
   }
 
   // artistName: nombre de artista(string)
