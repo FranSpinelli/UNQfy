@@ -8,6 +8,7 @@ const Artista = require('./Artista');
 const Database = require('./Database');
 const Buscador = require('./Buscador');
 const GeneradorDeClaves = require('./GeneradorDeClaves');
+const Errores = require('./Errores');
 
 function createAndAddArtist(unqfy, artistName, country) {
   const artist = unqfy.addArtist({ name: artistName, country });
@@ -71,7 +72,27 @@ describe('Add, remove and filter data', () => {
       tracks: [track],
       playlists: [playlist],
     });
-  });
+
+  })
+  
+  it('si se quiere agregar un album a un artista que no existe, levanta error', () => {
+      
+    assert.throws( () => {createAndAddAlbum(unqfy, 2, 'Roses Album', 1987);}, Errores.NoExisteElementoConID, 
+      "No existe artista con ID: 2")
+  })
+
+  it('si se quiere agregar una Track a un album que no existe, levanta error', () => {
+      
+    assert.throws( () => {createAndAddTrack(unqfy, 2, 'Roses Album', 1987);}, Errores.NoExisteElementoConID, 
+      "No existe album con ID: 2")
+  })
+
+  it('si se quiere agregar un album a un artista que no existe, levanta error', () => {
+      
+    assert.throws( () => {createAndAddAlbum(unqfy, 2, 'Roses Album', 1987);}, Errores.NoExisteElementoConID, 
+      "No existe artista con ID: 2")
+
+  })
 
   it('should get all tracks matching genres', () => {
     const artist1 = createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
@@ -200,8 +221,9 @@ describe('Album tests', () => {
     album.agregarTrack(track1);
     assert.equal(album.tracks.length, 1);
 
-    album.agregarTrack(track1);
-    assert.equal(album.tracks.length, 1);
+    assert.throws(() => {album.agregarTrack(track1)}, Errores.ElementoExistenteConMismoNombre, 
+      "Ya existe una track con nombre: unTitulo en: este album");
+  
   })
 
   it('un album no tiene 2 tracks con mismo nombre', () => {
@@ -210,8 +232,9 @@ describe('Album tests', () => {
     album.agregarTrack(track1);
     assert.equal(album.tracks.length, 1);
 
-    album.agregarTrack(track3);
-    assert.equal(album.tracks.length, 1);
+    assert.throws(() => {album.agregarTrack(track3)}, Errores.ElementoExistenteConMismoNombre, 
+      "Ya existe una track con nombre: unTitulo en: este album");
+  
   })
 
   it('un album puede eliminar tracks', () => {
@@ -244,23 +267,23 @@ describe('Artist tests', () => {
     assert.equal(artista.id, 0);
   })
 
-  it('un artista no tiene albums repetidos', () => {
+  it('un artista lanza error si se quiere agregar 2 albums repetidos', () => {
     
     artista.agregarAlbum(album);
     assert.equal(artista.albums.length, 1);
 
-    artista.agregarAlbum(album);
-    assert.equal(artista.albums.length, 1);
+    assert.throws(() => {artista.agregarAlbum(album)}, Errores.ElementoExistenteConMismoNombre, 
+      "Ya existe un album con nombre: unNombre en: este artista");
   })
 
-  it('un artista no tiene 2 albums con el mismo nombre', () => {
+  it('un artista lanza error si se quiere agregar 2 albums con el mismo nombre', () => {
     const album3 = new Album("unNombre", 1988,2);
 
     artista.agregarAlbum(album);
     assert.equal(artista.albums.length, 1);
 
-    artista.agregarAlbum(album3);
-    assert.equal(artista.albums.length, 1);
+    assert.throws(() => {artista.agregarAlbum(album3)}, Errores.ElementoExistenteConMismoNombre, 
+      "Ya existe un album con nombre: unNombre en: este artista");
   })
 
   it('un artista puede eliminar albums', () => {
@@ -286,23 +309,14 @@ describe('Database tests', () => {
    artista2 = new Artista("anto", 1998, 1);
   })
 
-  it('una database no puede tener 2 artistas con el mismo nombre', () => {
+  it('una database puede agregar 2 artistas con el mismo nombre', () => {
     const artista3 = new Artista("fran", 1988,2);
 
     database.agregarArtista(artista1);
     assert.equal(database.artistas.length, 1);
 
     database.agregarArtista(artista3);
-    assert.equal(database.artistas.length, 1);
-  })
-
-  it('una database no puede tener 2 artistas iguales', () => {
-
-    database.agregarArtista(artista1);
-    assert.equal(database.artistas.length, 1);
-
-    database.agregarArtista(artista1);
-    assert.equal(database.artistas.length, 1);
+    assert.equal(database.artistas.length, 2);
   })
 
   it('una database puede eliminar un artista', () => {

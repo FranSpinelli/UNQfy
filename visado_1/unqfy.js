@@ -8,6 +8,7 @@ const Track = require('./track');
 const Database = require('./Database');
 const GeneradorDeClaves = require('./GeneradorDeClaves');
 const Buscador = require('./Buscador');
+const Errores = require('./Errores');
 
 
 class UNQfy {
@@ -28,6 +29,8 @@ class UNQfy {
       let nuevoArtista = new Artista(artistData.name, artistData.bornDate, artistData.country, nuevoID)
       this._database.agregarArtista(nuevoArtista);
       return nuevoArtista;
+    }else{
+      throw new Errores.ElementoExisteneConMismoNombre(artistData.name, "un artista", "UNQfy"); 
     }
   }
 
@@ -43,6 +46,8 @@ class UNQfy {
       let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
       artistaConID.agregarAlbum(nuevoAlbum);
       return nuevoAlbum;
+    }else{
+      throw new Errores.NoExisteElementoConID("artista", artistId);
     }
   }
 
@@ -59,6 +64,8 @@ class UNQfy {
       let nuevoTrack = new Track(trackData.name, trackData.genres, trackData.duration, albumConID, nuevoID);
       albumConID.agregarTrack(nuevoTrack);
       return nuevoTrack;
+    }else{
+      throw new Errores.NoExisteElementoConID("album", albumId);
     }
   }
 

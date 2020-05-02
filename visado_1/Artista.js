@@ -1,3 +1,5 @@
+const Errores = require('./Errores');
+
 class Artista{
 
     constructor(unNombre, unAñoDeNacimiento, unPais, unID){
@@ -18,6 +20,8 @@ class Artista{
     agregarAlbum(unAlbum){
         if(!this._albums.includes(unAlbum) && this.noHayAlbumConElMismoNombre(unAlbum.nombre)){
             this._albums.push(unAlbum);
+        }else{
+            throw new Errores.ElementoExistenteConMismoNombre(unAlbum.nombre, "un album", "este artista");
         }
     }
 

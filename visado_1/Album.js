@@ -1,3 +1,5 @@
+const Errores = require('./Errores');
+
 class Album{
 
     constructor(unNombre, unAñoDeLanzamiento, unID, unAutor){
@@ -18,6 +20,8 @@ class Album{
     agregarTrack(unaTrack){
         if(!this._tracks.includes(unaTrack) && this.noHayCancionConMismoTitulo(unaTrack.titulo)){
             this._tracks.push(unaTrack);
+        }else{
+            throw new Errores.ElementoExistenteConMismoNombre(unaTrack.titulo, "una track", "este album");
         }
     }
 
