@@ -30,7 +30,7 @@ class UNQfy {
       this._database.agregarArtista(nuevoArtista);
       return nuevoArtista;
     }else{
-      throw new Errores.ElementoExisteneConMismoNombre(artistData.name, "un artista", "UNQfy"); 
+      throw new Errores.ElementoExistenteConMismoNombre(artistData.name, "un artista", "UNQfy"); 
     }
   }
 
@@ -69,7 +69,51 @@ class UNQfy {
     }
   }
 
-  getArtistById(id) {
+  eliminarArtista(artistaID){
+    let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._database.artistas);
+    if(artistaAEliminar !== undefined){
+      artistaAEliminar.albums.forEach(album => this.eliminarAlbum(album.id));
+      this._database.eliminarArtista(artistaAEliminar.nombre);
+    }else{
+      throw new Errores.NoExisteElementoConID("artista", artistaID);
+    }
+  }
+  eliminarAlbum(albumID){
+    let albumAElminar = this._buscador.getAlbumConID(albumID, this._database.artistas);
+    if(albumAElminar !== undefined){
+      albumAElminar.tracks.forEach(track => this.eliminarTrack(track.id));
+      let autorDelAlbum = albumAElminar.autor;
+      autorDelAlbum.eliminarAlbum(albumAElminar.nombre);
+    }else{
+      throw new Errores.NoExisteElementoConID("album", albumID);
+    }
+  }
+  eliminarTrack(trackID){
+    let trackAEliminar = this._buscador.getTrackConID(trackID, this._database.artistas);
+    if(trackAEliminar !== undefined){
+      let albumDeLaTrack = trackAEliminar.albumAlquePertenece;
+      albumDeLaTrack.eliminarTrack(trackAEliminar.titulo);
+
+      //Lo que sigue es sacar de todas las playlist esa track
+
+    }else{
+      throw new Errores.NoExisteElementoConID("track", trackID);
+    }
+  }
+
+  getArtistas(){
+    return this._database.artistas;
+  }
+
+  getAlbums(){
+    return this._buscador.getAlbumsDelSistema(this._database.artistas);
+  }
+
+  getTracks(){
+    return this._buscador.getTracksDelSistema(this._database.artistas);
+  }
+
+  /*getArtistById(id) {
     return this._buscador.getArtistaConID(id, this._database.artistas);
   }
 
@@ -79,7 +123,7 @@ class UNQfy {
 
   getTrackById(id) {
     return this._buscador.getTrackConID(id, this._database.artistas);
-  }
+  }*/
 
   getPlaylistById(id) {
 
@@ -92,6 +136,7 @@ class UNQfy {
       tracks: this._buscador.getTracksConTitulo(aName, this._database.artistas),
       //playlists: , agregar metodo correspondiente
     }
+    return dictionary;
   }
 
   // genres: array de generos(strings)
@@ -138,13 +183,13 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy];
+    const classes = [UNQfy, Buscador, Database, GeneradorDeClaves, Artista, Album, Track];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 }
 
 // COMPLETAR POR EL ALUMNO: exportar todas las clases que necesiten ser utilizadas desde un modulo cliente
 module.exports = {
-  UNQfy,
+  UNQfy
 };
 
