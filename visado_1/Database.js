@@ -10,7 +10,7 @@ class Database{
     get artistas(){return this._artistas;}
 
     agregarArtista(unArtista){
-            this._artistas.push(unArtista);
+        this._artistas.push(unArtista);
     }
 
     noHayArtistaConElMismoNombre(unNombre){

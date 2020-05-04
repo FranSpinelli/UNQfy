@@ -24,14 +24,16 @@ class UNQfy {
   //   artistData.country (string)
   // retorna: el nuevo artista creado
   addArtist(artistData) {
-    if(this._database.noHayArtistaConElMismoNombre(artistData.name)){
+    
       let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
-      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, artistData.country, nuevoID)
+
+      let primeraLetraEnMayuscula = artistData.country.split("")[0].toUpperCase();
+      let paisConMayuscula = artistData.country.split("");
+      paisConMayuscula[0] = primeraLetraEnMayuscula;
+      
+      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, paisConMayuscula.join(""), nuevoID)
       this._database.agregarArtista(nuevoArtista);
       return nuevoArtista;
-    }else{
-      throw new Errores.ElementoExistenteConMismoNombre(artistData.name, "un artista", "UNQfy"); 
-    }
   }
 
 

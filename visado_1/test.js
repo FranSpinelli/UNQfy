@@ -87,13 +87,6 @@ describe('Add, remove and filter data', () => {
       "No existe album con ID: 2")
   })
 
-  it('si se quiere agregar un album a un artista que no existe, levanta error', () => {
-      
-    assert.throws( () => {createAndAddAlbum(unqfy, 2, 'Roses Album', 1987);}, Errores.NoExisteElementoConID, 
-      "No existe artista con ID: 2")
-
-  })
-
   it('should get all tracks matching genres', () => {
     const artist1 = createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
     const album1 = createAndAddAlbum(unqfy, artist1.id, 'Appetite for Destruction', 1987);
