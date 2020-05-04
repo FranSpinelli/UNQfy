@@ -1,24 +1,34 @@
 const Buscador = require('./Buscador');
 
-class Database{
+class Database {
 
-    constructor(){
+    constructor() {
 
         this._artistas = [];
+        this._playList = [];
     }
 
-    get artistas(){return this._artistas;}
-
-    agregarArtista(unArtista){
+    get artistas() { return this._artistas; }
+    get playList(){return this._playList;}
+    
+    agregarArtista(unArtista) {
         this._artistas.push(unArtista);
     }
 
-    noHayArtistaConElMismoNombre(unNombre){
+    noHayArtistaConElMismoNombre(unNombre) {
         return this._artistas.every(artista => artista.nombre !== unNombre);
     }
 
-    eliminarArtista(unNombreDeArtista){
-        this._artistas = this._artistas.filter( artista => artista.nombre !== unNombreDeArtista );
+    eliminarArtista(unNombreDeArtista) {
+        this._artistas = this._artistas.filter(artista => artista.nombre !== unNombreDeArtista);
+    }
+    //agregar playlist.
+    agregarplaylist(unaplayList) {
+        this._playList.push(unaplayList);
+    }
+
+    eliminarArtista(unnombrePlayList) {
+        this._playList = this._playList.filter(playlist => playlist.nombre !== unnombrePlayList);
     }
 }
 
