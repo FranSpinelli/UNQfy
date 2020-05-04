@@ -2,6 +2,7 @@ const fs = require('fs'); // necesitado para guardar/cargar unqfy
 const unqmod = require('./unqfy'); // importamos el modulo unqfy
 
 
+
 function getUNQfy(filename = 'data.json') {
     let unqfy = new unqmod.UNQfy();
     if (fs.existsSync(filename)) {
@@ -15,6 +16,28 @@ function getUNQfy(filename = 'data.json') {
   }
 
   class Comando{
+      
+      //anto
+    /*
+    static mapearListaDePlayList(listaDePlayList) {
+            if (listaDePlayList.length > 0) {
+                let resultado = [];
+                listaDePlayList.forEach(playList => {
+                    let mappedPlayLsit = {
+                        nombre: playList.nombre,
+                        duracion: playList.duracion,
+                        genero: playList.genero.map(playList => playList.genero).toString(),
+                        tracks: playList.tracks.map(playList => playList.tracks).flat().map(track => track.titulo).toString()
+                    }
+                    resultado.push(mappedPlayLsit);
+                })
+                return resultado;
+            } else {
+                return "No existe ninguna PlayList con ese nombre"
+            }
+        }
+        */
+    //anto
 
     static mapearListaDeArtistas(listaDeArtistas){
         if(listaDeArtistas.length > 0){
@@ -87,6 +110,28 @@ class ComandoInexistente{
     }
 }
 
+//anto
+/*
+class ComandoAgregarPlayList extends Comando {
+
+    static execute(listaDeParametros) {
+        let unaUNQFY = getUNQfy();
+        let data = {
+            name: listaDeParametros[0],
+            genres: listaDeParametros[1],
+            duracion: listaDeParametros[2]
+        }
+        try {
+            unaUNQFY.addArtist(data);
+            super.comandoEjecutadoConExito(unaUNQFY)
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+*/
+//antofin
+
 class ComandoAgregarArtista extends Comando{
 
     static execute(listaDeParametros){
@@ -136,6 +181,22 @@ class ComandoAgregarTrack extends Comando{
     }
 }
 
+//anto
+/*
+class ComandoEliminarPlayList extends Comando {
+
+    static execute(listaDeParametros) {
+        let unaUNQFY = getUNQfy();
+        try {
+            unaUNQFY.eliminarPlayList(parseInt(listaDeParametros[0]));
+            super.comandoEjecutadoConExito(unaUNQFY);
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+*/
+
 class ComandoEliminarArtista extends Comando{
 
     static execute(listaDeParametros){
@@ -174,6 +235,17 @@ class ComandoEliminarTrack extends Comando{
         }
     }
 }
+
+/*
+class ComandoGetPlayList extends Comando {
+
+    static execute() {
+        let unaUNQFY = getUNQfy();
+        let resultados = unaUNQFY.getplayList();
+        console.log(super.mapearListaDePlayList(resultados));
+    }
+}
+*/
 
 class ComandoGetArtistas extends Comando{
 
@@ -240,19 +312,21 @@ class ComandoGetTracksDeArtista extends Comando{
 module.exports = {
     ComandoInexistente: ComandoInexistente,
     //-----------------------------------------------
+    // ComandoAgregarPlayList : ComandoAgregarPlayList,
     ComandoAgregarArtista: ComandoAgregarArtista,
     ComandoAgregarAlbum: ComandoAgregarAlbum,
     ComandoAgregarTrack: ComandoAgregarTrack,
     //-----------------------------------------------
+    //ComandoEliminarPlayList: ComandoEliminarPlayList,
     ComandoEliminarArtista: ComandoEliminarArtista,
     ComandoEliminarAlbum: ComandoEliminarAlbum,
     ComandoEliminarTrack: ComandoEliminarTrack,
     //-----------------------------------------------
+   // ComandoGetPlayList: ComandoGetPlayList,
     ComandoGetArtistas: ComandoGetArtistas,
     ComandoGetAlbums: ComandoGetAlbums,
     ComandoGetTracks: ComandoGetTracks,
     //-----------------------------------------------
     ComandoBuscarPorNombre: ComandoBuscarPorNombre,
     ComandoGetTracksConGeneros: ComandoGetTracksConGeneros,
-    ComandoGetTracksDeArtista: ComandoGetTracksDeArtista 
-}
+    ComandoGetTracksDeArtista: ComandoGetTracksDeArtista
