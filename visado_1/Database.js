@@ -28,7 +28,7 @@ class Database {
     }
     
      noHayPlayListConElMismoNombre(unNombre) {
-        return .this._playList.every(playList => playList.nombre !== unNombre);
+        return this._playList.every(playList => playList.nombre !== unNombre);
     }
 
     eliminarArtista(unnombrePlayList) {
