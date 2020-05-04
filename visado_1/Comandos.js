@@ -122,7 +122,7 @@ class ComandoAgregarPlayList extends Comando {
             duracion: listaDeParametros[2]
         }
         try {
-            unaUNQFY.addArtist(data);
+            unaUNQFY.addPlayList(data);
             super.comandoEjecutadoConExito(unaUNQFY)
         } catch (error) {
             console.log("ERROR: " + error.message);
