@@ -26,6 +26,10 @@ class Database {
     agregarplaylist(unaplayList) {
         this._playList.push(unaplayList);
     }
+    
+     noHayPlayListConElMismoNombre(unNombre) {
+        return .this._playList.every(playList => playList.nombre !== unNombre);
+    }
 
     eliminarArtista(unnombrePlayList) {
         this._playList = this._playList.filter(playlist => playlist.nombre !== unnombrePlayList);
