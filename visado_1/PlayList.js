@@ -1,12 +1,12 @@
 const Errores = require('./Errores');
 
 class PlayList {
-    constructor(nombre, idPlayList, duracion) {
+    constructor(nombre, idPlayList, duracion, genero) {
 
         this._nombre = nombre;
         this._idPlayList = idPlayList;
         this._duracion = duracion;
-        this._genero = [];
+        this._genero = genero;
         this._tracks = [];
     }
 
@@ -20,7 +20,7 @@ class PlayList {
 
     agregarPlayList(unTrack) {
 
-        if (!this._tracks.includes(unaTrack) && this.NoexisteTracks(unaTrack.titulo)) {
+        if (!this._tracks.includes(unaTrack) && this.NoexisteTracks(unaTrack.titulo) && this.NoIgualGeneroTracks(unTrack.genero)) {
             this._tracks.push(unaTrack);
         } else {
             throw new Errores.ElementoExistenteConMismoNombre(unaTrack.titulo, "una track", "este album");
@@ -34,7 +34,9 @@ class PlayList {
     NoexisteTracks(nomtitulo) {
         return this._tracks.every(track => track.titulo !== nomtitulo);
     }
-
+    NoIgualGeneroTracks(ungenero) {
+        return this._tracks.every(track => track.genero !== ungenero);
+    }
 
 } //fin clese
 module.exports = PlayList;
