@@ -33,10 +33,6 @@ class UNQfy {
   addArtist(artistData) {
     
       let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
-
-      /*let primeraLetraEnMayuscula = artistData.country.split("")[0].toUpperCase();
-      let paisConMayuscula = artistData.country.split("");
-      paisConMayuscula[0] = primeraLetraEnMayuscula;*/
       
       let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
       this._database.agregarArtista(nuevoArtista);
