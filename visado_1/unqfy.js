@@ -196,11 +196,20 @@ class UNQfy {
     return this._buscador.getTracksDeArtistaConNombre(artistName, this._artistas);
   }
 
-
-  // name: nombre de la playlist
+   // name: nombre de la playlist
   // genresToInclude: array de generos
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
+  createPlaylist(name, genresToInclude, maxDuration) {
+    /*** Crea una playlist y la agrega a unqfy. ***
+      El objeto playlist creado debe soportar (al menos):
+        * una propiedad name (string)
+        * un metodo duration() que retorne la duración de la playlist.
+        * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
+    */
+  
+    }
+  
   
  
   save(filename) {
