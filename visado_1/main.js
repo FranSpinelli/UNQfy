@@ -67,7 +67,7 @@ function main(){
  * getTracks
  * ----------------------------------------------------------------------------------------
  * buscarPorNombre unNombre;
- * getTracksConGeneros unaListaDeGeneros;
+ * getTracksConGeneros unaListaDeGeneros; <-- (la lista de generos es un string en donde cada genero esta separado por un espacio)
  * getTracksDeArtista unidDeArtista;
  */
 

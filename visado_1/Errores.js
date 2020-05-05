@@ -12,7 +12,15 @@ class NoExisteElementoConID extends Error {
     }
 }
 
+class FechaInvalida extends Error {
+  constructor(elemento){
+    super("Fecha " + elemento + " invalida");
+    this.name = "FechaInvalida";
+  }
+}
+
 module.exports = {
   ElementoExistenteConMismoNombre: ElementoExistenteConMismoNombre, 
-  NoExisteElementoConID: NoExisteElementoConID
+  NoExisteElementoConID: NoExisteElementoConID,
+  FechaInvalida: FechaInvalida
 }

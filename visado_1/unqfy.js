@@ -50,13 +50,17 @@ class UNQfy {
   // retorna: el nuevo album creado
   addAlbum(artistId, albumData) {
     let artistaConID = this._buscador.getArtistaConID(artistId, this._database.artistas);
-    if(artistaConID !== undefined){
+    if(artistaConID !== undefined && albumData.year < new Date().getFullYear()){
       let nuevoID = this._generadorDeClaves.generarClaveDeAlbum();
       let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
       artistaConID.agregarAlbum(nuevoAlbum);
       return nuevoAlbum;
     }else{
-      throw new Errores.NoExisteElementoConID("artista", artistId);
+      if(artistaConID == undefined){
+        throw new Errores.NoExisteElementoConID("artista", artistId);
+      }else{
+        throw new Errores.FechaInvalida("del album");
+      }
     }
   }
 
