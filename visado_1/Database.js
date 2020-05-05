@@ -15,10 +15,6 @@ class Database {
         this._artistas.push(unArtista);
     }
 
-    noHayArtistaConElMismoNombre(unNombre) {
-        return this._artistas.every(artista => artista.nombre !== unNombre);
-    }
-
     eliminarArtista(unNombreDeArtista) {
         this._artistas = this._artistas.filter(artista => artista.nombre !== unNombreDeArtista);
     }
@@ -31,7 +27,7 @@ class Database {
         return this._playList.every(playList => playList.nombre !== unNombre);
     }
 
-    eliminarArtista(unnombrePlayList) {
+    eliminarPlaylist(unnombrePlayList) {
         this._playList = this._playList.filter(playlist => playlist.nombre !== unnombrePlayList);
     }
 }

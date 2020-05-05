@@ -330,3 +330,4 @@ module.exports = {
     ComandoBuscarPorNombre: ComandoBuscarPorNombre,
     ComandoGetTracksConGeneros: ComandoGetTracksConGeneros,
     ComandoGetTracksDeArtista: ComandoGetTracksDeArtista
+}

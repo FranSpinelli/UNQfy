@@ -23,15 +23,22 @@ class UNQfy {
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
+  capitalize(unString){
+    let listaDelString = unString.split("");
+    let primeraletraEnMayuscula = unString.split("")[0].toUpperCase();
+    listaDelString[0] = primeraletraEnMayuscula;
+    return listaDelString.join("");
+  }
+
   addArtist(artistData) {
     
       let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
 
-      let primeraLetraEnMayuscula = artistData.country.split("")[0].toUpperCase();
+      /*let primeraLetraEnMayuscula = artistData.country.split("")[0].toUpperCase();
       let paisConMayuscula = artistData.country.split("");
-      paisConMayuscula[0] = primeraLetraEnMayuscula;
+      paisConMayuscula[0] = primeraLetraEnMayuscula;*/
       
-      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, paisConMayuscula.join(""), nuevoID)
+      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
       this._database.agregarArtista(nuevoArtista);
       return nuevoArtista;
   }
@@ -114,18 +121,6 @@ class UNQfy {
   getTracks(){
     return this._buscador.getTracksDelSistema(this._database.artistas);
   }
-
-  /*getArtistById(id) {
-    return this._buscador.getArtistaConID(id, this._database.artistas);
-  }
-
-  getAlbumById(id) {
-    return this._buscador.getAlbumConID(id, this._database.artistas);
-  }
-
-  getTrackById(id) {
-    return this._buscador.getTrackConID(id, this._database.artistas);
-  }*/
 
   getPlaylistById(id) {
 

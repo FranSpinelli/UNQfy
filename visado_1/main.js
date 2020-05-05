@@ -55,7 +55,8 @@ function main(){
 /* ESTRUCTURA DE LOS COMANDOS:
  * agregarArtista nombreDelArtista AñoDeNacimiento PaisDeOrigen;
  * agregarAlbum nombreDelAlbum añoDelanzamiento idDelArtistaQueLoCompuso;
- * agregarTrack nombreDeTrack duracion listaDeGeneros idDelAlbumAlQuePertenece;
+ * agregarTrack nombreDeTrack duracion listaDeGeneros idDelAlbumAlQuePertenece; 
+ * (la lista de generos es un string en donde cada genero esta separado por un espacio)
  * ----------------------------------------------------------------------------------------
  * eliminarArtista idDeArtista;
  * eliminarAlbum idDeAlbum;

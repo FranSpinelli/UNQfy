@@ -298,8 +298,8 @@ describe('Database tests', () => {
 
   beforeEach(() => {
    database = new Database();
-   artista1 = new Artista("fran", 1998, 0);
-   artista2 = new Artista("anto", 1998, 1);
+   artista1 = new Artista("fran", 1998, "argentina", 0);
+   artista2 = new Artista("anto", 1998, "argentina", 1);
   })
 
   it('una database puede agregar 2 artistas con el mismo nombre', () => {
