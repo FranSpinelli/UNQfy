@@ -20,11 +20,31 @@ class UNQfy {
     this._artistas = [];
     this._playList = [];
   }
-
+  
+  /*
+   addPlayList(name, genresToInclude, maxDuration) {
+     /*** Crea una playlist y la agrega a unqfy. ***
+    El objeto playlist creado debe soportar (al menos):
+      * una propiedad name (string)
+      * un metodo duration() que retorne la duración de la playlist.
+      * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
+  */
+    /*
+        if (this._database.noHayArtistaConElMismoNombre(PlayListData.name)) {
+            let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
+            let nuevaPlayList = new PlayList(name, nuevoID, maxDuration, genresToInclude)
+            this._database.agregarplaylist(nuevaPlayList);
+            return nuevoArtista;
+        } else {
+            throw new Errores.ElementoExistenteConMismoNombre(PlayListData.name, "una PlayList", "UNQfy");
+        }
+    }
+    */
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
+  
   capitalize(unString){
     let listaDelString = unString.split("");
     let primeraletraEnMayuscula = unString.split("")[0].toUpperCase();
@@ -82,8 +102,8 @@ class UNQfy {
 
   agregarplaylist(unaplayList) {
     this._playList.push(unaplayList);
-  }
-
+  }  
+  
   eliminarArtista(artistaID){
     let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._artistas);
     if(artistaAEliminar !== undefined){
@@ -121,6 +141,19 @@ class UNQfy {
     this._playList = this._playList.filter(playlist => playlist.nombre !== unnombrePlayList);
   }
 
+  //eliminar play list
+    /*
+    eliminarPlayList(PlayListID) {
+      let playListEliminar = this._buscador.getArtistaConID(PlayListID, this._database.playList);
+      if (playListEliminar !== undefined) {
+        playListEliminar.tracks.forEach(tatrack => this.eliminarTrack(tatrack.id));
+          this._database.eliminarPlayList(playListEliminar.nombre);
+      } else {
+          throw new Errores.NoExisteElementoConID("PlayList", PlayListID);
+      }
+  }
+*/
+
   getArtistas(){
     return this._artistas;
   }
@@ -132,11 +165,11 @@ class UNQfy {
   getTracks(){
     return this._buscador.getTracksDelSistema(this._artistas);
   }
-
+/*
   getPlaylistById(id) {
-
+    return this._buscador.getTracksDelSistema(this._database.playList);
   }
-
+*/
   searchByName(aName){
     let dictionary = {
       artists: this._buscador.getArtistasConNombre(aName, this._artistas),
@@ -168,16 +201,8 @@ class UNQfy {
   // genresToInclude: array de generos
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
-  createPlaylist(name, genresToInclude, maxDuration) {
-  /*** Crea una playlist y la agrega a unqfy. ***
-    El objeto playlist creado debe soportar (al menos):
-      * una propiedad name (string)
-      * un metodo duration() que retorne la duración de la playlist.
-      * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
-  */
-
-  }
-
+  
+ 
   save(filename) {
     const listenersBkp = this.listeners;
     this.listeners = [];
