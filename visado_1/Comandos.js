@@ -103,7 +103,7 @@ function getUNQfy(filename = 'data.json') {
     }
 }
 
-class ComandoInexistente{
+class ComandoInexistente extends Comando{
 
     static execute(){
         console.log("ERROR: comando desconocido");
@@ -252,7 +252,11 @@ class ComandoGetArtistas extends Comando{
     static execute(){
         let unaUNQFY = getUNQfy();
         let resultados = unaUNQFY.getArtistas();
-        console.log(super.mapearListaDeArtistas(resultados));
+        if(resultados.length === 0){
+            console.log("no hay ningun artista registrado en el sistema")
+        }else{
+            console.log(super.mapearListaDeArtistas(resultados));
+        }
     }
 }
 
@@ -261,7 +265,11 @@ class ComandoGetAlbums extends Comando{
     static execute(){
         let unaUNQFY = getUNQfy();
         let resultados = unaUNQFY.getAlbums();
-        console.log(super.mapearListaDeAlbums(resultados));
+        if(resultados.length ===  0){
+            console.log("no hay ningun album registrado en el sistema")
+        }else{
+            console.log(super.mapearListaDeAlbums(resultados));
+        }
     }
 }
 
@@ -270,7 +278,11 @@ class ComandoGetTracks extends Comando{
     static execute(){
         let unaUNQFY = getUNQfy();
         let resultados = unaUNQFY.getTracks();
-        console.log(super.mapearListaDeTracks(resultados));
+        if(resultados.length === 0){
+            console.log("no hay ninguna track registrada en el sistema")
+        }else{
+            console.log(super.mapearListaDeTracks(resultados));
+        }
     }
 }
 

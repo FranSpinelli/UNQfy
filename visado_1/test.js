@@ -5,7 +5,6 @@ const libunqfy = require('./unqfy');
 const Track = require('./track');
 const Album = require('./Album');
 const Artista = require('./Artista');
-const Database = require('./Database');
 const Buscador = require('./Buscador');
 const GeneradorDeClaves = require('./GeneradorDeClaves');
 const Errores = require('./Errores');
@@ -290,37 +289,6 @@ describe('Artist tests', () => {
     assert.equal(artista.albums.length, 0);
   })
 
-})
-
-describe('Database tests', () => {
-  let database;
-  let artista1;
-  let artista2;
-
-  beforeEach(() => {
-   database = new Database();
-   artista1 = new Artista("fran", 1998, "argentina", 0);
-   artista2 = new Artista("anto", 1998, "argentina", 1);
-  })
-
-  it('una database puede agregar 2 artistas con el mismo nombre', () => {
-    const artista3 = new Artista("fran", 1988,2);
-
-    database.agregarArtista(artista1);
-    assert.equal(database.artistas.length, 1);
-
-    database.agregarArtista(artista3);
-    assert.equal(database.artistas.length, 2);
-  })
-
-  it('una database puede eliminar un artista', () => {
-
-    database.agregarArtista(artista1);
-    assert.equal(database.artistas.length, 1);
-
-    database.eliminarArtista("fran");
-    assert.equal(database.artistas.length, 0);
-  })
 })
 
 describe('GeneradorDeClaves tests', () => {

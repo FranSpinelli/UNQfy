@@ -5,7 +5,6 @@ const fs = require('fs'); // para cargar/guarfar unqfy
 const Artista = require('./Artista');
 const Album = require('./Album');
 const Track = require('./track');
-const Database = require('./Database');
 const GeneradorDeClaves = require('./GeneradorDeClaves');
 const Buscador = require('./Buscador');
 const Errores = require('./Errores');
@@ -14,9 +13,12 @@ const Errores = require('./Errores');
 class UNQfy {
 
   constructor(){
-    this._database = new Database();
+    //this._database = new Database();
     this._generadorDeClaves = new GeneradorDeClaves();
     this._buscador = new Buscador();
+
+    this._artistas = [];
+    this._playList = [];
   }
 
   // artistData: objeto JS con los datos necesarios para crear un artista
@@ -35,7 +37,7 @@ class UNQfy {
       let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
       
       let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
-      this._database.agregarArtista(nuevoArtista);
+      this._artistas.push(nuevoArtista);
       return nuevoArtista;
   }
 
@@ -45,21 +47,21 @@ class UNQfy {
   //   albumData.year (number)
   // retorna: el nuevo album creado
   addAlbum(artistId, albumData) {
-    let artistaConID = this._buscador.getArtistaConID(artistId, this._database.artistas);
-    if(artistaConID !== undefined && albumData.year < new Date().getFullYear()){
+    let artistaConID = this._buscador.getArtistaConID(artistId, this._artistas);
+    if(artistaConID === undefined){
+
+      throw new Errores.NoExisteElementoConID("artista", artistId);
+    }else if(albumData.year > new Date().getFullYear()){
+
+      throw new Errores.FechaInvalida("del album");
+    }else{
+
       let nuevoID = this._generadorDeClaves.generarClaveDeAlbum();
       let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
       artistaConID.agregarAlbum(nuevoAlbum);
       return nuevoAlbum;
-    }else{
-      if(artistaConID == undefined){
-        throw new Errores.NoExisteElementoConID("artista", artistId);
-      }else{
-        throw new Errores.FechaInvalida("del album");
-      }
     }
   }
-
 
   // trackData: objeto JS con los datos necesarios para crear un track
   //   trackData.name (string)
@@ -67,7 +69,7 @@ class UNQfy {
   //   trackData.genres (lista de strings)
   // retorna: el nuevo track creado
   addTrack(albumId, trackData) {
-    let albumConID = this._buscador.getAlbumConID(albumId, this._database.artistas);
+    let albumConID = this._buscador.getAlbumConID(albumId, this._artistas);
     if(albumConID !== undefined){
       let nuevoID = this._generadorDeClaves.generarClaveDeTrack();
       let nuevoTrack = new Track(trackData.name, trackData.genres, trackData.duration, albumConID, nuevoID);
@@ -78,17 +80,22 @@ class UNQfy {
     }
   }
 
+  agregarplaylist(unaplayList) {
+    this._playList.push(unaplayList);
+  }
+
   eliminarArtista(artistaID){
-    let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._database.artistas);
+    let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._artistas);
     if(artistaAEliminar !== undefined){
       artistaAEliminar.albums.forEach(album => this.eliminarAlbum(album.id));
-      this._database.eliminarArtista(artistaAEliminar.nombre);
+      this._artistas = this._artistas.filter(artista => artista.nombre !== unNombreDeArtista);
     }else{
       throw new Errores.NoExisteElementoConID("artista", artistaID);
     }
   }
+
   eliminarAlbum(albumID){
-    let albumAElminar = this._buscador.getAlbumConID(albumID, this._database.artistas);
+    let albumAElminar = this._buscador.getAlbumConID(albumID, this._artistas);
     if(albumAElminar !== undefined){
       albumAElminar.tracks.forEach(track => this.eliminarTrack(track.id));
       let autorDelAlbum = albumAElminar.autor;
@@ -98,7 +105,7 @@ class UNQfy {
     }
   }
   eliminarTrack(trackID){
-    let trackAEliminar = this._buscador.getTrackConID(trackID, this._database.artistas);
+    let trackAEliminar = this._buscador.getTrackConID(trackID, this._artistas);
     if(trackAEliminar !== undefined){
       let albumDeLaTrack = trackAEliminar.albumAlquePertenece;
       albumDeLaTrack.eliminarTrack(trackAEliminar.titulo);
@@ -110,16 +117,20 @@ class UNQfy {
     }
   }
 
+  eliminarPlaylist(unnombrePlayList) {
+    this._playList = this._playList.filter(playlist => playlist.nombre !== unnombrePlayList);
+  }
+
   getArtistas(){
-    return this._database.artistas;
+    return this._artistas;
   }
 
   getAlbums(){
-    return this._buscador.getAlbumsDelSistema(this._database.artistas);
+    return this._buscador.getAlbumsDelSistema(this._artistas);
   }
 
   getTracks(){
-    return this._buscador.getTracksDelSistema(this._database.artistas);
+    return this._buscador.getTracksDelSistema(this._artistas);
   }
 
   getPlaylistById(id) {
@@ -128,9 +139,9 @@ class UNQfy {
 
   searchByName(aName){
     let dictionary = {
-      artists: this._buscador.getArtistasConNombre(aName, this._database.artistas),
-      albums: this._buscador.getAlbumsConNombre(aName, this._database.artistas),
-      tracks: this._buscador.getTracksConTitulo(aName, this._database.artistas),
+      artists: this._buscador.getArtistasConNombre(aName, this._artistas),
+      albums: this._buscador.getAlbumsConNombre(aName, this._artistas),
+      tracks: this._buscador.getTracksConTitulo(aName, this._artistas),
       //playlists: , agregar metodo correspondiente
     }
     return dictionary;
@@ -141,7 +152,7 @@ class UNQfy {
   getTracksMatchingGenres(genres) {
     let resultadoFinal = [];
     genres.forEach(genero => {
-      resultadoFinal = resultadoFinal.concat(this._buscador.getTracksDelGenero(genero, this._database.artistas));
+      resultadoFinal = resultadoFinal.concat(this._buscador.getTracksDelGenero(genero, this._artistas));
     });
     return [...new Set(resultadoFinal)];
   }
@@ -149,7 +160,7 @@ class UNQfy {
   // artistName: nombre de artista(string)
   // retorna: los tracks interpredatos por el artista con nombre artistName
   getTracksMatchingArtist(artistName) {
-    return this._buscador.getTracksDeArtistaConNombre(artistName, this._database.artistas);
+    return this._buscador.getTracksDeArtistaConNombre(artistName, this._artistas);
   }
 
 
@@ -180,7 +191,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, Buscador, Database, GeneradorDeClaves, Artista, Album, Track];
+    const classes = [UNQfy, Buscador, GeneradorDeClaves, Artista, Album, Track];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 }
