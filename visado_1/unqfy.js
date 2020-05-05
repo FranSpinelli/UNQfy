@@ -18,11 +18,29 @@ class UNQfy {
     this._generadorDeClaves = new GeneradorDeClaves();
     this._buscador = new Buscador();
   }
+  
+   //PlayListData objeto JS con los datos necesarios para crear una PlayList
+    //   PlayListData.name (string)
+    //   PlayListData.country (string)
+    // retorna: el nuevo artista creado
+    /*
+    addPlayList(PlayListData) {
+        if (this._database.noHayArtistaConElMismoNombre(PlayListData.name)) {
+            let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
+            let nuevaPlayList = new PlayList(PlayListData.nombre, nuevoID, PlayListData.duration, PlayListData.genero)
+            this._database.agregarplaylist(nuevaPlayList);
+            return nuevoArtista;
+        } else {
+            throw new Errores.ElementoExistenteConMismoNombre(PlayListData.name, "una PlayList", "UNQfy");
+        }
+    }
+    */
 
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
+  
   capitalize(unString){
     let listaDelString = unString.split("");
     let primeraletraEnMayuscula = unString.split("")[0].toUpperCase();
@@ -82,6 +100,21 @@ class UNQfy {
     }
   }
 
+  
+  //eliminar play list
+    /*
+    eliminarPlayList(PlayListID) {
+      let playListEliminar = this._buscador.getArtistaConID(PlayListID, this._database.playList);
+      if (playListEliminar !== undefined) {
+        playListEliminar.tracks.forEach(tatrack => this.eliminarTrack(tatrack.id));
+          this._database.eliminarPlayList(playListEliminar.nombre);
+      } else {
+          throw new Errores.NoExisteElementoConID("PlayList", PlayListID);
+      }
+  }
+*/
+  
+  
   eliminarArtista(artistaID){
     let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._database.artistas);
     if(artistaAEliminar !== undefined){
