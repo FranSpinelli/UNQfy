@@ -8,6 +8,8 @@ const Track = require('./track');
 const GeneradorDeClaves = require('./GeneradorDeClaves');
 const Buscador = require('./Buscador');
 const Errores = require('./Errores');
+const PlayList = require('./PlayList');
+const Usuario = require('./Usuario');
 
 
 class UNQfy {
@@ -21,25 +23,7 @@ class UNQfy {
     this._playList = [];
   }
   
-  /*
-   addPlayList(name, genresToInclude, maxDuration) {
-     /*** Crea una playlist y la agrega a unqfy. ***
-    El objeto playlist creado debe soportar (al menos):
-      * una propiedad name (string)
-      * un metodo duration() que retorne la duración de la playlist.
-      * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
-  */
-    /*
-        if (this._database.noHayArtistaConElMismoNombre(PlayListData.name)) {
-            let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
-            let nuevaPlayList = new PlayList(name, nuevoID, maxDuration, genresToInclude)
-            this._database.agregarplaylist(nuevaPlayList);
-            return nuevoArtista;
-        } else {
-            throw new Errores.ElementoExistenteConMismoNombre(PlayListData.name, "una PlayList", "UNQfy");
-        }
-    }
-    */
+   
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
@@ -142,7 +126,7 @@ class UNQfy {
   }
 
   //eliminar play list
-    /*
+    
     eliminarPlayList(PlayListID) {
       let playListEliminar = this._buscador.getArtistaConID(PlayListID, this._database.playList);
       if (playListEliminar !== undefined) {
@@ -152,7 +136,7 @@ class UNQfy {
           throw new Errores.NoExisteElementoConID("PlayList", PlayListID);
       }
   }
-*/
+
 
   getArtistas(){
     return this._artistas;
@@ -167,7 +151,7 @@ class UNQfy {
   }
 /*
   getPlaylistById(id) {
-    return this._buscador.getTracksDelSistema(this._database.playList);
+    return this._buscador.getTracksDelSistema(this.playList);
   }
 */
   searchByName(aName){
@@ -196,14 +180,27 @@ class UNQfy {
   // genresToInclude: array de generos
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
-  createPlaylist(name, genresToInclude, maxDuration) {
+  //ejemplo de crearPlayList
+  
+  //createPlaylist(name, genresToInclude, maxDuration) {
     /*** Crea una playlist y la agrega a unqfy. ***
       El objeto playlist creado debe soportar (al menos):
         * una propiedad name (string)
         * un metodo duration() que retorne la duración de la playlist.
-        * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
-    */
+        * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.    */
   
+    //}
+  addPlayList(name, genresToInclude, maxDuration) {
+       /*** Crea una playlist y la agrega a unqfy. ***
+      El objeto playlist creado debe soportar (al menos):
+      * una propiedad name (string)
+      * un metodo duration() que retorne la duración de la playlist.
+      * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
+     */
+
+        let nuevaPlayList = new PlayList(name, nuevoID, maxDuration, genresToInclude)
+        this._playList.push(nuevaPlayList);
+        return nuevaPlayList;
     }
   
   
