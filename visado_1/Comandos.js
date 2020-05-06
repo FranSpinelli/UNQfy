@@ -141,8 +141,12 @@ class ComandoAgregarArtista extends Comando{
             bornDate: listaDeParametros[1], 
             country: listaDeParametros[2]
         }
+        try{
             unaUNQFY.addArtist(data);
             super.comandoEjecutadoConExito(unaUNQFY)
+        }catch(error){
+            console.log("ERROR: " + error.message);
+        }
     }
 }
 

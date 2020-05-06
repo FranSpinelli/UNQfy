@@ -37,12 +37,15 @@ class UNQfy {
   }
 
   addArtist(artistData) {
-    
-      let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
+      if(artistData.bornDate < new Date().getFullYear()){
+        let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
       
-      let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
-      this._artistas.push(nuevoArtista);
-      return nuevoArtista;
+        let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
+        this._artistas.push(nuevoArtista);
+        return nuevoArtista;
+      }else{
+        throw new Errores.FechaInvalida("del artista");
+      }
   }
 
 
