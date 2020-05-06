@@ -20,6 +20,14 @@ class Buscador{
         return albumsDelArtista.map( album => album.tracks).flat();
     }
 
+    getTracksConGeneros(generos, artistasDeSistema){
+        let resultadoFinal = [];
+        generos.forEach(genero => {
+            resultadoFinal = resultadoFinal.concat(this.getTracksDelGenero(genero, artistasDeSistema));
+        });
+        return [...new Set(resultadoFinal)];
+    }
+
     getTracksDelGenero(unGenero, listaDeArtistasDelSistema){
         return this.getTracksDelSistema(listaDeArtistasDelSistema).filter( 
             track => track.generosMusicales.some( genero => genero.toLowerCase() === unGenero.toLowerCase()))

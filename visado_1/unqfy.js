@@ -183,11 +183,7 @@ class UNQfy {
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
   getTracksMatchingGenres(genres) {
-    let resultadoFinal = [];
-    genres.forEach(genero => {
-      resultadoFinal = resultadoFinal.concat(this._buscador.getTracksDelGenero(genero, this._artistas));
-    });
-    return [...new Set(resultadoFinal)];
+    return this._buscador.getTracksConGeneros(genres, this._artistas);
   }
 
   // artistName: nombre de artista(string)

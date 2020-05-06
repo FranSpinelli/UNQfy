@@ -344,7 +344,7 @@ describe('Buscador tests', () => {
     track4 = new Track("cancion 4", ["genero4"], 500, album2, 4);
     track5 = new Track("cancion 1b", ["genero1"], 500, album3, 5);
     track6 = new Track("cancion 2b", ["genero2"], 500, album3, 6);
-    track7 = new Track("cancion 3b", ["genero3"], 500, album4, 7);
+    track7 = new Track("cancion 3b", ["genero3", "genero1"], 500, album4, 7);
     track8 = new Track("cancion 4b", ["genero4"], 500, album4, 8);
     buscador = new Buscador();
 
@@ -418,7 +418,13 @@ describe('Buscador tests', () => {
   it('un buscador puede buscar todas las tracks de determinado genero, por busqueda parcial', () => {
     
     let busquedaParcial1 =  buscador.getTracksDelGenero("genero1", listaDeArtistas);
-    assert.equal(busquedaParcial1.length, 2);
+    assert.equal(busquedaParcial1.length, 3);
+  })
+
+  it('un buscador puede buscar todas las tracks con algun genero de una lista de generos, por busqueda parcial', () => {
+    
+    let busquedaParcial1 =  buscador.getTracksConGeneros(["genero1", "genero2"], listaDeArtistas);
+    assert.equal(busquedaParcial1.length, 5);
   })
 
   it('un buscador puede hacer busquedas exactas por id de Tracks/Albums/Artistas', () => {
