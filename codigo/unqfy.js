@@ -10,6 +10,7 @@ const Buscador = require('./Buscador');
 const Errores = require('./Errores');
 const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
+const ApiCaller = require('./ApiCaller');
 
 
 class UNQfy {
@@ -17,6 +18,7 @@ class UNQfy {
   constructor(){
     this._generadorDeClaves = new GeneradorDeClaves();
     this._buscador = new Buscador();
+    this._apiCaller = new ApiCaller();
 
     this._artistas = [];
     this._playList = [];
@@ -167,7 +169,33 @@ class UNQfy {
   getTracksMatchingArtist(artistName) {
     return this._buscador.getTracksDeArtistaConNombre(artistName, this._artistas);
   }
-  
+
+  populateAlbumsForArtist(unIDdeArtista){
+    let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
+
+    if(artista === undefined){
+      throw NoExisteElementoConID("Artista", unIDdeArtista);
+    }else{
+      this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
+        response.items.reduce( (lista, album) => {
+          if(lista.filter(elem => elem.nombre === album.nombre).length > 0){
+            return lista;
+          }else{
+            return lista.concat([album]);
+          }
+        }, []).forEach(album => {
+
+          let data = {
+            name: album.name, 
+            year: album.release_date.split('-')[0]
+          }
+
+          this.addAlbum(unIDdeArtista, data);
+        })
+      });
+    }
+  }
+
   save(filename) {
     const listenersBkp = this.listeners;
     this.listeners = [];

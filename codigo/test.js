@@ -137,6 +137,19 @@ describe('Add, remove and filter data', () => {
     assert.isTrue(matchingTracks.includes(t2));
     assert.isTrue(matchingTracks.includes(t3));
   });
+
+  it('test unqfy populateAlbumsForArtist(artistID)', () => {
+    let data = {
+      name: 'Luis Fonsi',
+      bornDate: 1998,
+      country: 'Colombia'
+    }
+    unqfy.addArtist(data);
+    assert.equal(unqfy.getArtistas()[0].albums.length, 0)
+
+    unqfy.populateAlbumsForArtist(1);
+    assert.isTrue(unqfy.getArtistas()[0].albums.length <= 20)
+  })
 });
 
 describe('Playlist Creation and properties', () => {

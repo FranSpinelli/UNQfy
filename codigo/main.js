@@ -71,41 +71,4 @@ function main(){
  * getTracksDeArtista unidDeArtista;
  */
 
-//main();
-
-function reduceList(lista, nro){
-
-  return lista.reduce((accumulator, elem) => {
-
-    if(accumulator.reduce( (a,b) => { return a + b },0 ) + elem <= nro){
-      return accumulator.concat([elem]);
-    }else{
-      return accumulator;
-    }
-  }, [])
-}
-
-
-function reduceList2(lista, nro){
-
-  result = [];
-
-  lista.forEach(element => {
-    
-    console.log(element)
-    console.log(result)
-
-    if(result.reduce( (a,b) => {return a + b},0) + element <= nro){
-    
-      result.push(element);
-
-    }
-
-  });
-
-  return result;
-}
-
-
-//console.log(reduceList2([1,2,3,5,6,7,8,9], 10));
-console.log(reduceList([1,2,3,4,5,6,7,8,9], 10));
+main();
