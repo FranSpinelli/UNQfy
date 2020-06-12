@@ -70,6 +70,3 @@ class ApiCaller{
 
 module.exports = ApiCaller;
 
-/*a = new ApiCaller()
-//a.getArtistID('Luis Fonzi').then((a) => console.log(a.artists.items[0].id));
-a.getArtistAlbums('Luis Fonzi').then((a) => console.log(a.items))*/

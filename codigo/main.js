@@ -42,6 +42,9 @@ function ejecutarComandoCon(unStringDeComando, unaListaDeArgumentos){
     case "getTracksDeArtista":
       comandos.ComandoGetTracksDeArtista.execute(unaListaDeArgumentos);
       break;
+    case "popularAlbumsParaArtista":
+      comandos.ComandoPopulateAlbumsForArtist.execute(unaListaDeArgumentos);
+      break;
     default: 
       comandos.ComandoInexistente.execute();
   }
@@ -69,6 +72,8 @@ function main(){
  * buscarPorNombre unNombre;
  * getTracksConGeneros unaListaDeGeneros; <-- (la lista de generos es un string en donde cada genero esta separado por un espacio)
  * getTracksDeArtista unidDeArtista;
+ * ----------------------------------------------------------------------------------------
+ * popularAlbumsParaArtista idDeUnArtista
  */
 
 main();

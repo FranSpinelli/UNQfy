@@ -174,11 +174,14 @@ class UNQfy {
     let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
 
     if(artista === undefined){
-      throw NoExisteElementoConID("Artista", unIDdeArtista);
+      throw new Errores.NoExisteElementoConID("Artista", unIDdeArtista);
     }else{
-      this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
+      //refactor this code
+      return this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
+        let populatedAlbums = [];
+
         response.items.reduce( (lista, album) => {
-          if(lista.filter(elem => elem.nombre === album.nombre).length > 0){
+          if(this._buscador.albumYaEstaEnLista(lista,album)){
             return lista;
           }else{
             return lista.concat([album]);
@@ -190,9 +193,12 @@ class UNQfy {
             year: album.release_date.split('-')[0]
           }
 
+          populatedAlbums.push(data);
           this.addAlbum(unIDdeArtista, data);
         })
-      });
+        
+        return populatedAlbums;
+      })
     }
   }
 
@@ -207,12 +213,48 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, Buscador, GeneradorDeClaves, Artista, Album, Track];
+    const classes = [UNQfy, Buscador, GeneradorDeClaves,ApiCaller, Artista, Album, Track];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
+
 }
 
 module.exports = {
   UNQfy
 };
 
+/*
+populateAlbumsForArtist(unIDdeArtista){
+    let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
+
+    if(artista === undefined){
+      throw new Errores.NoExisteElementoConID("Artista", unIDdeArtista);
+    }else{
+      return this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
+        return this.formatResponseToModel(response, unIDdeArtista);
+      })
+    }
+  }
+
+  formatResponseToModel(unaResponse, unIDdeArtista){
+    let populatedAlbums = []
+
+    unaResponse.items.reduce( (lista, album) => {
+      if(this._buscador.albumYaEstaEnLista(lista,album)){
+        return lista;
+      }else{
+        return lista.concat([album]);
+      }
+    }, []).forEach(album => {
+
+      let data = {
+        name: album.name, 
+        year: album.release_date.split('-')[0]
+      }
+      
+      populatedAlbums.push(data);
+      this.addAlbum(unIDdeArtista, data);
+    })
+    return populatedAlbums;
+  }
+*/

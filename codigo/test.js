@@ -138,7 +138,7 @@ describe('Add, remove and filter data', () => {
     assert.isTrue(matchingTracks.includes(t3));
   });
 
-  it('test unqfy populateAlbumsForArtist(artistID)', () => {
+  it('test unqfy populateAlbumsForArtist(artistID)', function() {
     let data = {
       name: 'Luis Fonsi',
       bornDate: 1998,
@@ -147,8 +147,24 @@ describe('Add, remove and filter data', () => {
     unqfy.addArtist(data);
     assert.equal(unqfy.getArtistas()[0].albums.length, 0)
 
-    unqfy.populateAlbumsForArtist(1);
-    assert.isTrue(unqfy.getArtistas()[0].albums.length <= 20)
+    return unqfy.populateAlbumsForArtist(1).then((respuesta) => {
+      
+      //assert.equal(unqfy.getArtistas()[0].albums.length,20);
+      assert.isTrue(respuesta.length <= 20);
+    })
+  })
+
+  it('test unqfy populateAlbumsForArtist(artistID) caso de error', ()=>{
+    let data = {
+      name: 'Luis Fonsi',
+      bornDate: 1998,
+      country: 'Colombia'
+    }
+    unqfy.addArtist(data);
+    assert.equal(unqfy.getArtistas()[0].albums.length, 0)
+
+    assert.throws( () => {unqfy.populateAlbumsForArtist(1998);}, Errores.NoExisteElementoConID, 
+      "No existe Artista con ID: 1998")
   })
 });
 
@@ -178,11 +194,6 @@ describe('Playlist Creation and properties', () => {
     
     
     assert.isAtMost(playlist.duracion, 1400);
-    /*assert.isTrue(playlist.hasTrack(t1));
-    assert.isTrue(playlist.hasTrack(t2));
-    assert.isTrue(playlist.hasTrack(t3));
-    assert.isTrue(playlist.hasTrack(t4));
-    assert.lengthOf(playlist.tracks, 4);*/
   });
 });
 
@@ -207,12 +218,12 @@ describe('Track tests', () => {
     assert.equal(track.id, 1);
   })
 
-  it('una track sabe darte su letra a pesar de que no la tenga seteada',() => {
+  it('una track sabe darte su letra a pesar de que no la tenga seteada',function() {
     let autor = new Artista("Luis Fonsi", 1234, "Colombia", 1);
     let album1 = new Album("lol", 2010, 1, autor);
     let despacito = new Track("Despacito", ['1','2'], 20, album1, 1);
 
-    despacito.getLyrics(apiCaller).then( (respuesta) =>{
+    return despacito.getLyrics(apiCaller).then( (respuesta) =>{
 
       assert.equal(respuesta, "Comin' over in my direction\nSo thankful for that, it's such a blessin', yeah\nTurn every situation into heaven, yeah\n\nOh-oh, you are my sunrise on the darkest day\nGot me feelin' some kind of way\nMake me wanna savor every moment slowly, slowly\n\nYou fit me tailor-made, love how you put it on\nGot the only key, know how to turn it on\nThe way you nibble on my ear, the only words I wanna hear\nBaby, take it slow so we can last long (oh)\n\nTú, tú eres el imán y yo soy el metal\nMe voy acercando y voy armando el plan\nSólo con pensarlo se acelera el pulso (oh, yeah)\n\nYa, ya me estás gustando más de lo normal\nTodos mis sentidos van pidiendo más\nEsto hay que tomarlo sin ningún apuro\n\nDespacito\nQuiero respirar tu cuello despacito\nDeja que te diga cosas al oído\nPara que te acuerdes si no estás conmigo\n\nDespacito\nQuiero desnudarte a besos despacito\nFirmar las paredes de tu laberinto\nY hacer de tu cuerpo todo un manuscrito (sube, sube, sube)\nSube, sube (oh)\n...\n\n******* This Lyrics is NOT for Commercial use *******\n(1409620049094)")
     })
@@ -352,19 +363,35 @@ describe ('ApiCaller tests', () => {
     apicaller = new ApiCaller();
   })
 
-  it('un ApiCaller puede retornar el ID de una Track a partir de su nombre y artista', () =>{
+  it('un ApiCaller puede retornar el ID de una Track en MusicxMatch a partir de su nombre y artista', function(){
 
-    apicaller.getTrackID('Despacito', 'Luis Fonsi').then(response =>{
+    return apicaller.getTrackID('Despacito', 'Luis Fonsi').then(response =>{
 
       assert.equal(response.message.body.track_list[0].track.track_id,152921994);
     })
   })
 
-  it('un ApiCaller puede retornar la letra de una Track a partir de su nombre y artista', () => {
+  it('un ApiCaller puede retornar la letra de una Track, de MusicxMatch a partir de su nombre y artista', function(){
 
-    apicaller.getTrackLyrics('Despacito', 'Luis Fonsi').then(response =>{
+    return apicaller.getTrackLyrics('Despacito', 'Luis Fonsi').then(response =>{
 
       assert.equal(response.message.body.lyrics.lyrics_body, "Comin' over in my direction\nSo thankful for that, it's such a blessin', yeah\nTurn every situation into heaven, yeah\n\nOh-oh, you are my sunrise on the darkest day\nGot me feelin' some kind of way\nMake me wanna savor every moment slowly, slowly\n\nYou fit me tailor-made, love how you put it on\nGot the only key, know how to turn it on\nThe way you nibble on my ear, the only words I wanna hear\nBaby, take it slow so we can last long (oh)\n\nTú, tú eres el imán y yo soy el metal\nMe voy acercando y voy armando el plan\nSólo con pensarlo se acelera el pulso (oh, yeah)\n\nYa, ya me estás gustando más de lo normal\nTodos mis sentidos van pidiendo más\nEsto hay que tomarlo sin ningún apuro\n\nDespacito\nQuiero respirar tu cuello despacito\nDeja que te diga cosas al oído\nPara que te acuerdes si no estás conmigo\n\nDespacito\nQuiero desnudarte a besos despacito\nFirmar las paredes de tu laberinto\nY hacer de tu cuerpo todo un manuscrito (sube, sube, sube)\nSube, sube (oh)\n...\n\n******* This Lyrics is NOT for Commercial use *******\n(1409620049094)");
+    })
+  })
+
+  it('un ApiCaller puede retornar el ID de una Track en Spotify a partir de su nombre y artista', function(){
+
+    return apicaller.getArtistID('Luis Fonsi').then((response) =>{
+
+      assert.equal(response.artists.items[0].id,'4V8Sr092TqfHkfAA5fXXqG');
+    })
+  })
+
+  it('un ApiCaller puede retornar los albums en spotify de un artista a partir de su nombre y artista', function(){
+
+    return apicaller.getArtistAlbums('Luis Fonsi').then((response) =>{
+
+      assert.equal(response.items.length,20);
     })
   })
 })

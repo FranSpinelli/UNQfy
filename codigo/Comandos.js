@@ -325,6 +325,22 @@ class ComandoGetTracksDeArtista extends Comando{
     }
 }
 
+class ComandoPopulateAlbumsForArtist extends Comando{
+
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try{
+            unaUNQFY.populateAlbumsForArtist(parseInt(listaDeParametros[0])).then((populatedAlbums) =>{
+                console.log("Albums traidos de Spotify:");
+                console.log(populatedAlbums);
+                super.comandoEjecutadoConExito(unaUNQFY);
+            });
+        }catch(error){
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+
 module.exports = {
     ComandoInexistente: ComandoInexistente,
     //-----------------------------------------------
@@ -345,5 +361,12 @@ module.exports = {
     //-----------------------------------------------
     ComandoBuscarPorNombre: ComandoBuscarPorNombre,
     ComandoGetTracksConGeneros: ComandoGetTracksConGeneros,
-    ComandoGetTracksDeArtista: ComandoGetTracksDeArtista
+    ComandoGetTracksDeArtista: ComandoGetTracksDeArtista,
+    //-----------------------------------------------
+    ComandoPopulateAlbumsForArtist: ComandoPopulateAlbumsForArtist,
+
+    //------------------------------------------------
+
+    getUNQfy: getUNQfy,
+    saveUNQfy: saveUNQfy
 }

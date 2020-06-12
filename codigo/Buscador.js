@@ -57,6 +57,10 @@ class Buscador{
         let albumsDelSistema = this.getAlbumsDelSistema(listaDeArtistasDelSistema);
         return albumsDelSistema.map( album => album.tracks).flat();
     }
+
+    albumYaEstaEnLista(unaLista,unAlbum){
+        return unaLista.filter(elem => elem.nombre === unAlbum.nombre).length > 0
+    }
 }
 
 
