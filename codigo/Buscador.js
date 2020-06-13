@@ -58,8 +58,8 @@ class Buscador{
         return albumsDelSistema.map( album => album.tracks).flat();
     }
 
-    albumYaEstaEnLista(unaLista,unAlbum){
-        return unaLista.filter(elem => elem.nombre === unAlbum.nombre).length > 0
+    albumIsInList(unaLista,unAlbum){
+        return unaLista.filter(elem => elem.name === unAlbum.name).length > 0
     }
 }
 

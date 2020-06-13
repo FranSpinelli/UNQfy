@@ -11,6 +11,7 @@ const Errores = require('./Errores');
 const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
 const ApiCaller = require('./ApiCaller');
+const { response } = require('express');
 
 
 class UNQfy {
@@ -174,32 +175,35 @@ class UNQfy {
     let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
 
     if(artista === undefined){
-      throw new Errores.NoExisteElementoConID("Artista", unIDdeArtista);
+      return Promise.reject(new Errores.NoExisteElementoConID("Artista", unIDdeArtista));
     }else{
-      //refactor this code
-      return this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
-        let populatedAlbums = [];
-
-        response.items.reduce( (lista, album) => {
-          if(this._buscador.albumYaEstaEnLista(lista,album)){
-            return lista;
-          }else{
-            return lista.concat([album]);
-          }
-        }, []).forEach(album => {
-
-          let data = {
-            name: album.name, 
-            year: album.release_date.split('-')[0]
-          }
-
-          populatedAlbums.push(data);
-          this.addAlbum(unIDdeArtista, data);
-        })
-        
-        return populatedAlbums;
-      })
+      
+      return this.populate(artista);
     }
+  }
+
+  populate(unArtista){
+    return this._apiCaller.getArtistAlbums(unArtista.nombre).then((response)=> {
+      let populatedAlbums = [];
+
+      response.items.reduce( (lista, album) => {
+        if(this._buscador.albumIsInList(lista,album) || !unArtista.noHayAlbumConElMismoNombre(album.name)){
+          return lista;
+        }else{
+          return lista.concat([album]);
+        }
+      }, []).forEach(album => {
+
+        let data = {
+          name: album.name, 
+          year: album.release_date.split('-')[0]
+        }
+
+        populatedAlbums.push(data);
+        this.addAlbum(unArtista.id, data);
+      });
+      return populatedAlbums;
+    })
   }
 
   save(filename) {

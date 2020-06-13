@@ -331,9 +331,13 @@ class ComandoPopulateAlbumsForArtist extends Comando{
         let unaUNQFY = getUNQfy();
 
         unaUNQFY.populateAlbumsForArtist(parseInt(listaDeParametros[0])).then((populatedAlbums) =>{
-            console.log("Albums traidos de Spotify:");
-            console.log(populatedAlbums);
-            super.comandoEjecutadoConExito(unaUNQFY);
+            if(populatedAlbums.length == 0){
+                console.log("No hay albums para popular de este artista");
+            }else{
+                super.comandoEjecutadoConExito(unaUNQFY);
+                console.log("Albums traidos de Spotify:");
+                console.log(populatedAlbums);
+            }
          }).catch( (error) =>{
             console.log("ERROR: " + error);
          })
