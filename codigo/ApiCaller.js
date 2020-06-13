@@ -91,17 +91,12 @@ class ApiCaller{
                     grant_type: "refresh_token",
                     refresh_token: spotifyCreds.refresh_token
                 },
-                /*transform: function (body, response) {
-                    if (response.headers['content-type'] === 'application/json') {
-                        response.body = JSON.parse(body);
-                    }
-                    return response;
-                }*/
             };
             
             return rp(options).then(function(response){
+                let responseJSON = JSON.parse(response);
 
-                spotifyCreds.access_token = response.body.access_token;
+                spotifyCreds.access_token = responseJSON.access_token;
                 fs.writeFile('spotifyCreds.json', JSON.stringify(spotifyCreds),(err) => {
                     if (err) {return err}
                 });
