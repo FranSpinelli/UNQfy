@@ -1,5 +1,6 @@
 const rp = require('request-promise');
 const spotifyCreds = require('./spotifyCreds.json');
+const fs = require('fs');
 
 class ApiCaller{
 
@@ -53,20 +54,60 @@ class ApiCaller{
     }
 
     getArtistID(unNombreDeArtista){
+    
+        return this.probarYActualizarConexionSpotify().then(() => {
+            let options = {
+                url: 'https://api.spotify.com/v1/search',
+                headers: { Authorization: 'Bearer ' + spotifyCreds.access_token},
+                json: true,
+                qs: {
+                    q: unNombreDeArtista,
+                    type: "artist",
+                    limit: 1
+                }
+            };
+
+            return rp.get(options)
+        })
+    }
+
+    probarYActualizarConexionSpotify(){
         let options = {
-            url: 'https://api.spotify.com/v1/search',
+            url: 'https://api.spotify.com/v1/me',
             headers: { Authorization: 'Bearer ' + spotifyCreds.access_token},
             json: true,
-            qs: {
-                q: unNombreDeArtista,
-                type: "artist",
-                limit: 1
-            }
         };
 
-        return rp.get(options)
+        return rp.get(options).catch((error) =>{
+            
+            let options = {
+                method: 'POST',
+                uri: 'https://accounts.spotify.com/api/token',
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    Authorization : "Basic ZDM4YTAxMTNhZDNlNDI5YzlkYmZlNGVkNDgzYTI4NzQ6YTkxNzZjYWMyMGRiNDM5Mzg3N2U2YTBmZmI5OWJmZjM="
+                },
+                form: {
+                    grant_type: "refresh_token",
+                    refresh_token: spotifyCreds.refresh_token
+                },
+                /*transform: function (body, response) {
+                    if (response.headers['content-type'] === 'application/json') {
+                        response.body = JSON.parse(body);
+                    }
+                    return response;
+                }*/
+            };
+            
+            return rp(options).then(function(response){
+
+                spotifyCreds.access_token = response.body.access_token;
+                fs.writeFile('spotifyCreds.json', JSON.stringify(spotifyCreds),(err) => {
+                    if (err) {return err}
+                });
+            });
+        })
     }
 }
 
 module.exports = ApiCaller;
-

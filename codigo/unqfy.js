@@ -222,39 +222,3 @@ class UNQfy {
 module.exports = {
   UNQfy
 };
-
-/*
-populateAlbumsForArtist(unIDdeArtista){
-    let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
-
-    if(artista === undefined){
-      throw new Errores.NoExisteElementoConID("Artista", unIDdeArtista);
-    }else{
-      return this._apiCaller.getArtistAlbums(artista.nombre).then((response)=> {
-        return this.formatResponseToModel(response, unIDdeArtista);
-      })
-    }
-  }
-
-  formatResponseToModel(unaResponse, unIDdeArtista){
-    let populatedAlbums = []
-
-    unaResponse.items.reduce( (lista, album) => {
-      if(this._buscador.albumYaEstaEnLista(lista,album)){
-        return lista;
-      }else{
-        return lista.concat([album]);
-      }
-    }, []).forEach(album => {
-
-      let data = {
-        name: album.name, 
-        year: album.release_date.split('-')[0]
-      }
-      
-      populatedAlbums.push(data);
-      this.addAlbum(unIDdeArtista, data);
-    })
-    return populatedAlbums;
-  }
-*/
