@@ -33,15 +33,15 @@ class UNQfy {
   }
 
   addArtist(artistData) {
-      //if(artistData.bornDate <= new Date().getFullYear()){
+      if(this._buscador.hayArtistaConData(artistData,this._artistas)){
+        throw new Errores.ElementoDuplicado("Artista")
+      }else{
         let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
       
         let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
         this._artistas.push(nuevoArtista);
         return nuevoArtista;
-      /*}else{
-        throw new Errores.FechaInvalida("del artista");
-      }*/
+      }
   }
 
   addAlbum(artistId, albumData) {

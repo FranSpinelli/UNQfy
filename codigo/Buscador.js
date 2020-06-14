@@ -61,6 +61,11 @@ class Buscador{
     albumIsInList(unaLista,unAlbum){
         return unaLista.filter(elem => elem.name === unAlbum.name).length > 0
     }
+
+    hayArtistaConData(data, listaDeArtistas){
+        return listaDeArtistas.filter(artista => artista.nombre === data.name && artista.pais === data.country)
+        .length > 0; 
+    }
 }
 
 

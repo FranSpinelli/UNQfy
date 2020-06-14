@@ -19,8 +19,16 @@ class FechaInvalida extends Error {
   }
 }
 
+class ElementoDuplicado extends Error {
+  constructor(elemento){
+    super("Fecha " + elemento + " invalida");
+    this.name = "FechaInvalida";
+  }
+}
+
 module.exports = {
   ElementoExistenteConMismoNombre: ElementoExistenteConMismoNombre, 
   NoExisteElementoConID: NoExisteElementoConID,
-  FechaInvalida: FechaInvalida
+  FechaInvalida: FechaInvalida,
+  ElementoDuplicado : ElementoDuplicado
 }
