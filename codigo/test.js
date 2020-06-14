@@ -149,6 +149,7 @@ describe('Add, remove and filter data', () => {
     unqfy.addArtist(data);
     assert.equal(unqfy.getArtistas()[0].albums.length, 0)
 
+    
     return unqfy.populateAlbumsForArtist(1).then((respuesta) => {
       
       assert.equal(unqfy.getArtistas()[0].albums.length,15);
@@ -156,17 +157,12 @@ describe('Add, remove and filter data', () => {
     })
   })
 
-  it('test unqfy populateAlbumsForArtist(artistID) caso de error', ()=>{
-    let data = {
-      name: 'Luis Fonsi',
-      bornDate: 1998,
-      country: 'Colombia'
-    }
-    unqfy.addArtist(data);
-    assert.equal(unqfy.getArtistas()[0].albums.length, 0)
+  it('test unqfy populateAlbumsForArtist(artistID) caso de error', function(){
 
-    assert.throws( () => {unqfy.populateAlbumsForArtist(1998);}, Errores.NoExisteElementoConID, 
-      "No existe Artista con ID: 1998")
+    return unqfy.populateAlbumsForArtist(1998).catch((error) => {
+
+      assert.equal(error.message, "No existe Artista con ID: 1998")
+    })
   })
 });
 

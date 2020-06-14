@@ -17,6 +17,9 @@ class Artista{
     get albums(){return this._albums;}
     get id(){return this._id;}
 
+    set nombre(nuevoNombre){this._nombre = nuevoNombre;}
+    set pais(nuevoPais){this._pais = nuevoPais;}
+
     agregarAlbum(unAlbum){
         if(!this._albums.includes(unAlbum) && this.noHayAlbumConElMismoNombre(unAlbum.nombre)){
             this._albums.push(unAlbum);

@@ -17,6 +17,8 @@ class Album{
     get id(){return this._id;}
     get autor(){return this._autor;}
 
+    set añoDeLanzamiento(nuevoAñoDeLanzamiento){this._añoDeLanzamiento = nuevoAñoDeLanzamiento}
+
     agregarTrack(unaTrack){
         if(!this._tracks.includes(unaTrack) && this.noHayCancionConMismoTitulo(unaTrack.titulo)){
             this._tracks.push(unaTrack);

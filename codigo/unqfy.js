@@ -33,15 +33,15 @@ class UNQfy {
   }
 
   addArtist(artistData) {
-      if(artistData.bornDate <= new Date().getFullYear()){
+      //if(artistData.bornDate <= new Date().getFullYear()){
         let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
       
         let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
         this._artistas.push(nuevoArtista);
         return nuevoArtista;
-      }else{
+      /*}else{
         throw new Errores.FechaInvalida("del artista");
-      }
+      }*/
   }
 
   addAlbum(artistId, albumData) {
@@ -107,7 +107,7 @@ class UNQfy {
     let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._artistas);
     if(artistaAEliminar !== undefined){
       artistaAEliminar.albums.forEach(album => this.eliminarAlbum(album.id));
-      this._artistas = this._artistas.filter(artista => artista.nombre !== unNombreDeArtista);
+      this._artistas = this._artistas.filter(artista => artista.id !== artistaID);
     }else{
       throw new Errores.NoExisteElementoConID("artista", artistaID);
     }
@@ -140,13 +140,40 @@ class UNQfy {
   getArtistas(){
     return this._artistas;
   }
+  //refactor en todos los getXConID
+  getArtistaConID(unID){
+    let artista = this._buscador.getArtistaConID(unID, this._artistas);
+    if(artista === undefined){
+      throw new Errores.NoExisteElementoConID("Artista", unID);
+    }else{
+      return artista;
+    }
+  }
 
   getAlbums(){
     return this._buscador.getAlbumsDelSistema(this._artistas);
   }
 
+  getAlbumConID(unID){
+    let album = this._buscador.getAlbumConID(unID, this._artistas);
+    if (album === undefined){
+      throw new Errores.NoExisteElementoConID("Album", unID);
+    }else{
+      return album;
+    }
+  }
+
   getTracks(){
     return this._buscador.getTracksDelSistema(this._artistas);
+  }
+
+  getTrackConID(unID){
+    let track = this._buscador.getTrackConID(unID,this._artistas);
+    if (track === undefined){
+      throw new Errores.NoExisteElementoConID("Track", unID)
+    }else{
+      return track;
+    }
   }
 
   getPlayLists(){
@@ -204,6 +231,15 @@ class UNQfy {
       });
       return populatedAlbums;
     })
+  }
+
+  getTrackLyrics(trackID){
+    let track = this._buscador.getTrackConID(trackID,this._artistas);
+    if(track === undefined){
+      throw new Errores.NoExisteElementoConID("Track", trackID);
+    }else{
+      return track.getLyrics(this._apiCaller); 
+    }
   }
 
   save(filename) {

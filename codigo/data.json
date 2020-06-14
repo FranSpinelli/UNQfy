@@ -1,0 +1,34 @@
+{
+  "rootObjects": [
+    {
+      "id": "__00001__",
+      "name": null
+    }
+  ],
+  "objects": {
+    "__00001__": {
+      "_generadorDeClaves": "__00002__",
+      "_buscador": "__00003__",
+      "_apiCaller": "__00004__",
+      "_artistas": "__00001__",
+      "_playList": "__00006__",
+      "listeners": "__00001__"
+    },
+    "__00002__": {
+      "_contadorIDTrack": 0,
+      "_contadorIDAlbum": 3,
+      "_contadorIDArtista": 4,
+      "_contadorIDPlaylist": 0
+    },
+    "__00003__": {},
+    "__00004__": {},
+    "__00006__": {}
+  },
+  "types": {
+    "__00001__": "UNQfy",
+    "__00002__": "GeneradorDeClaves",
+    "__00003__": "Buscador",
+    "__00004__": "ApiCaller",
+    "__00006__": "Array"
+  }
+}
