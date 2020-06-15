@@ -13,160 +13,77 @@ const artists = express();
 const albums = express();
 const tracks = express();
 
+rootApp.use(bodyParser.json());
+
 rootApp.route('/api').get((req,res) => {
     res.json({ message: 'yay! Bienvenido a UNQfy api' });
 });
 
-artists.use(bodyParser.json());
-
 artists.route('/artists')
 .get((req, res) => {
 
-    let finalArtistList = [];
+    let artistas = []
     if (req.query.name){
-        let artistas = unqfy.searchByName(req.query.name).artists.forEach(artista => {
-            let data = {
-                id: artista.id,
-                name: artista.nombre,
-                albums: artista.albums,
-                country: artista.pais
-            }
-            finalArtistList.push(data);
-        });;
-        
-        res.json(finalArtistList);
+        artistas = unqfy.searchByName(req.query.name).artists.map(artista => {    
+            return returnedArtist(artista);
+        });
     }else{
-        let artistas = unqfy.getArtistas().forEach(artista => {
-            let data = {
-                id: artista.id,
-                name: artista.nombre,
-                albums: artista.albums,
-                country: artista.pais
-            }
-            finalArtistList.push(data);
-        });;
-        
-        res.json(finalArtistList);
+        artistas = unqfy.getArtistas().map(artista => {
+            return returnedArtist(artista);
+        });
     }
+    res.json(artistas);
 }).post((req,res) => {
-    if(req.body.name === undefined || req.body.country === undefined){
-        throw new ErroresApi.MissingValue()
-    }
+
+    artistMissingValueChecking(req);
     let nuevoArtista = unqfy.addArtist(req.body);
     funciones.saveUNQfy(unqfy);
-    
-    let responseData = {
-        id : nuevoArtista.id,
-        name : nuevoArtista.nombre,
-        country : nuevoArtista.pais,
-        albums : nuevoArtista.albums
-    }
 
-    res.status(201).json(responseData);
+    res.status(201).json(returnedArtist(nuevoArtista));
 });
 
 artists.route('/artists/:id')
 .get((req, res) =>{
-    let artistID = parseInt(req.params.id);
 
-    let finalAlbums = [];
-    let artista = unqfy.getArtistaConID(artistID);
-    
-    artista.albums.forEach(album =>{
-        let data = {
-            name: album.nombre, 
-            id: album.id,
-            year: album.añoDeLanzamiento,
-            tracks: album.tracks
-        }
-        finalAlbums.push(data);
-    })
-
-
-    let responseData = {
-        id : artista.id,
-        name : artista.nombre,
-        country : artista.pais,
-        albums : finalAlbums
-    }
-    res.status(200).json(responseData);
-
+    let artista = unqfy.getArtistaConID(parseInt(req.params.id));
+    res.status(200).json(returnedArtist(artista));
 }).delete((req,res) => {
-    let artistID = parseInt(req.params.id);
 
-    unqfy.eliminarArtista(artistID);
+    unqfy.eliminarArtista(parseInt(req.params.id));
     funciones.saveUNQfy(unqfy);
 
     res.sendStatus(204);
 }).patch((req,res) => {
-    if(req.body.name === undefined || req.body.country === undefined){
-        throw new ErroresApi.MissingValue()
-    }
-
-    let artistID = parseInt(req.params.id);
-    let artista = unqfy.getArtistaConID(artistID);
-  
+    
+    artistMissingValueChecking(req);
+    let artista = unqfy.getArtistaConID(parseInt(req.params.id));  
+    
     artista.nombre = req.body.name;
     artista.pais = req.body.country;
 
-
     funciones.saveUNQfy(unqfy);
-
-    let responseData = {
-        id : artista.id,
-        name : artista.nombre,
-        country : artista.pais,
-        albums : artista.albums 
-    }
-
-    res.status(200).json(responseData);
+    res.status(200).json(returnedArtist(artista));
 })
-
-albums.use(bodyParser.json())
+//--------------------------------------------------------------------------------------------------------------
 albums.route('/albums').get((req,res) => {
-    let finalAlbumsList = []
+    let albums = []
     if (req.query.name){
-        let albums = unqfy.searchByName(req.query.name).albums.forEach(album => {
-            let data = {
-                name: album.nombre, 
-                id: album.id,
-                year: album.añoDeLanzamiento,
-                tracks: album.tracks
-            }
-            finalAlbumsList.push(data);
-        });;
-        
-        res.status(200).json(finalAlbumsList);
-    }else{
-        
-        let albums = unqfy.getAlbums().forEach(album => {
-            let data = {
-                name: album.nombre, 
-                id: album.id,
-                year: album.añoDeLanzamiento,
-                tracks: album.tracks
-            }
-            finalAlbumsList.push(data);
+        albums = unqfy.searchByName(req.query.name).albums.map(album => {
+            return returnedAlbum(album);
         });
-        
-        res.status(200).json(finalAlbumsList);
+    }else{
+        albums = unqfy.getAlbums().map(album => {
+            return returnedAlbum(album);
+        });
     }
+    res.status(200).json(albums);
 }).post((req,res) => {
-    if(req.body.artistId === undefined || req.body.name === undefined || req.body.year === undefined){
-        throw new ErroresApi.MissingValue()
-    }
+    albumMissingValueChecking(req);
     try{
     let nuevoAlbum = unqfy.addAlbum(req.body.artistId, req.body);
     funciones.saveUNQfy(unqfy);
-    
-    let responseData = {
-        id : nuevoAlbum.id,
-        name : nuevoAlbum.nombre,
-        year : nuevoAlbum.añoDeLanzamiento,
-        tracks : nuevoAlbum.tracks
-    }
-    res.status(201).json(responseData);
 
+    res.status(201).json(returnedAlbum(nuevoAlbum));
     }catch(err){
         if(err instanceof Errores.NoExisteElementoConID){
             throw new ErroresApi.InexistentRelatedSource;
@@ -178,24 +95,9 @@ albums.route('/albums').get((req,res) => {
 
 albums.route('/albums/:id')
 .get((req,res) => {
-    let albumID = parseInt(req.params.id);
+    let album = unqfy.getAlbumConID(parseInt(req.params.id));
 
-    let album = unqfy.getAlbumConID(albumID);
-    let albumTracks = [];
-    album.tracks.forEach(track => {
-        let data = {
-            title: track.titulo
-        }
-        albumTracks.push(data);
-    })
-
-    let responseData = {
-        id : album.id,
-        name : album.nombre,
-        year : album.añoDeLanzamiento,
-        tracks : albumTracks
-    }
-    res.status(200).json(responseData);
+    res.status(200).json(returnedAlbum(album));
 }).delete((req,res) => {
     let albumID = parseInt(req.params.id);
 
@@ -208,27 +110,18 @@ albums.route('/albums/:id')
         throw new ErroresApi.MissingValue()
     }
 
-    let albumID = parseInt(req.params.id);
-    let album = unqfy.getAlbumConID(albumID);
+    let album = unqfy.getAlbumConID(parseInt(req.params.id));    
     album.añoDeLanzamiento = req.body.year;
     funciones.saveUNQfy(unqfy);
 
-    let responseData = {
-        id : album.id,
-        name : album.nombre,
-        year : album.añoDeLanzamiento,
-        tracks : album.tracks
-    }
-
-    res.status(200).json(responseData);
+    res.status(200).json(returnedAlbum(album));
 })
-
+//--------------------------------------------------------------------------------------
 tracks.route('/tracks/:id/lyrics')
 .get((req,res) => {
 
-    let trackID = parseInt(req.params.id);
-    let track = unqfy.getTrackConID(trackID);
-    unqfy.getTrackLyrics(trackID).then( response => {
+    let track = unqfy.getTrackConID(parseInt(req.params.id));
+    unqfy.getTrackLyrics(parseInt(req.params.id)).then( response => {
         
         funciones.saveUNQfy(unqfy);
         let responceData = {
@@ -236,13 +129,64 @@ tracks.route('/tracks/:id/lyrics')
             lyrics: response
         }
 
-        res.status(200).json(responseData);
+        res.status(200).json(responceData);
+    }).catch((error) => {
+        throw error;
     });
 })
 
 rootApp.use('/api', artists, albums, tracks,);
 rootApp.use(function(req,res){
     throw new ErroresApi.WrongRoute();
-})
+});
 rootApp.use(errorHandler);
 rootApp.listen(port, () => console.log('where magic happens'));
+
+//----------------------------------------------------------------------------------------
+//FUNCIONES AUXILIARES--------------------------------------------------------------------
+
+function returnedArtist(unArtista){
+
+    let albums = unArtista.albums.map(album =>{
+        return {
+            name: album.nombre, 
+            id: album.id,
+            year: album.añoDeLanzamiento,
+            tracks: album.tracks
+        }
+    })
+
+    return {
+        id: unArtista.id,
+        name: unArtista.nombre,
+        albums: albums,
+        country: unArtista.pais
+    }
+}
+function artistMissingValueChecking(request){
+    if(request.body.name === undefined || request.body.country === undefined){
+        throw new ErroresApi.MissingValue()
+    }
+}
+
+function returnedAlbum(unAlbum){
+    
+    let tracks = unAlbum.tracks.map(track => {
+        return{
+            title: track.titulo
+        }
+    })
+
+    return {
+        name: unAlbum.nombre, 
+        id: unAlbum.id,
+        year: unAlbum.añoDeLanzamiento,
+        tracks: tracks
+    }
+}
+
+function albumMissingValueChecking(request){
+    if(request.body.artistId === undefined || request.body.name === undefined || request.body.year === undefined){
+        throw new ErroresApi.MissingValue()
+    }
+}

@@ -18,10 +18,11 @@ class Track {
 
     getLyrics(unApiCaller){
         if(this._lyrics === undefined){
-            return  unApiCaller.getTrackLyrics(this._titulo, this._albumAlquePertenece.autor).then( response => {
+    
+            return  unApiCaller.getTrackLyrics(this._titulo, this._albumAlquePertenece.autor.nombre).then( response => {
                 this._lyrics = response.message.body.lyrics.lyrics_body;
             }).then(() => {
-                return this._lyrics
+                return this._lyrics;
             }); 
         }else{
             return new Promise((resolve, reject) => resolve(this._lyrics));

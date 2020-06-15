@@ -164,6 +164,29 @@ describe('Add, remove and filter data', () => {
       assert.equal(error.message, "No existe Artista con ID: 1998")
     })
   })
+
+  it('test unqfy getTrackLyrics(trackID)', function() {
+    const artist = createAndAddArtist(unqfy, 'Luis Fonsi', 'Puerto Rico');
+    const album = createAndAddAlbum(unqfy, artist.id, 'VIDA', 200);
+    const t1 = createAndAddTrack(unqfy, album.id, 'Despacito', 200, ['hit']);
+
+    assert.isTrue(artist.id === 1);
+    assert.isTrue(album.id === 1);
+    assert.isTrue(t1.id === 1);
+
+    return unqfy.getTrackLyrics(1).then((respuesta) => {
+      
+      assert.equal(respuesta, "Comin' over in my direction\nSo thankful for that, it's such a blessin', yeah\nTurn every situation into heaven, yeah\n\nOh-oh, you are my sunrise on the darkest day\nGot me feelin' some kind of way\nMake me wanna savor every moment slowly, slowly\n\nYou fit me tailor-made, love how you put it on\nGot the only key, know how to turn it on\nThe way you nibble on my ear, the only words I wanna hear\nBaby, take it slow so we can last long (oh)\n\nTú, tú eres el imán y yo soy el metal\nMe voy acercando y voy armando el plan\nSólo con pensarlo se acelera el pulso (oh, yeah)\n\nYa, ya me estás gustando más de lo normal\nTodos mis sentidos van pidiendo más\nEsto hay que tomarlo sin ningún apuro\n\nDespacito\nQuiero respirar tu cuello despacito\nDeja que te diga cosas al oído\nPara que te acuerdes si no estás conmigo\n\nDespacito\nQuiero desnudarte a besos despacito\nFirmar las paredes de tu laberinto\nY hacer de tu cuerpo todo un manuscrito (sube, sube, sube)\nSube, sube (oh)\n...\n\n******* This Lyrics is NOT for Commercial use *******\n(1409620049094)");
+    })
+  })
+
+  it('test unqfy getTrackLyrics(trackID) caso de error', function(){
+
+    return unqfy.getTrackLyrics(200).catch((error) => {
+
+      assert.equal(error.message, "No existe Track con ID: 200")
+    })
+  })
 });
 
 describe('Playlist Creation and properties', () => {

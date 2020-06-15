@@ -67,6 +67,7 @@ class UNQfy {
       let nuevoID = this._generadorDeClaves.generarClaveDeTrack();
       let nuevoTrack = new Track(trackData.name, trackData.genres, trackData.duration, albumConID, nuevoID);
       albumConID.agregarTrack(nuevoTrack);
+     
       return nuevoTrack;
     }else{
       throw new Errores.NoExisteElementoConID("album", albumId);
@@ -236,7 +237,7 @@ class UNQfy {
   getTrackLyrics(trackID){
     let track = this._buscador.getTrackConID(trackID,this._artistas);
     if(track === undefined){
-      throw new Errores.NoExisteElementoConID("Track", trackID);
+      return Promise.reject(new Errores.NoExisteElementoConID("Track", trackID));
     }else{
       return track.getLyrics(this._apiCaller); 
     }
