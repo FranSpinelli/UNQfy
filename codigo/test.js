@@ -29,8 +29,9 @@ function createAndAddTrack(unqfy, albumName, trackName, trackDuraction, trackGen
 }
 
 
-describe('Add, remove and filter data', () => {
+describe('Add, remove and filter data', function() {
   let unqfy = null;
+  this.timeout(10000);
 
   beforeEach(() => {
     unqfy = new libunqfy.UNQfy();
@@ -218,7 +219,8 @@ describe('Playlist Creation and properties', () => {
   });
 });
 
-describe('Track tests', () => {
+describe('Track tests', function() {
+  this.timeout(10000);
   let album;
   let track;
   let apiCaller;
@@ -377,8 +379,9 @@ describe('GeneradorDeClaves tests', () => {
   })
 })
 
-describe ('ApiCaller tests', () => {
+describe ('ApiCaller tests', function() {
   let apicaller;
+  this.timeout(10000);
 
   beforeEach(() => {
     apicaller = new ApiCaller();
