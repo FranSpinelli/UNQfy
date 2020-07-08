@@ -5,12 +5,12 @@ const fs = require('fs');
 const Artista = require('./Artista');
 const Album = require('./Album');
 const Track = require('./track');
-const GeneradorDeClaves = require('./GeneradorDeClaves');
-const Buscador = require('./Buscador');
-const Errores = require('./Errores');
+const GeneradorDeClaves = require('../auxiliares/GeneradorDeClaves');
+const Buscador = require('../auxiliares/Buscador');
+const Errores = require('../errores/Errores');
 const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
-const ApiCaller = require('./ApiCaller');
+const ApiCaller = require('../auxiliares/ApiCaller');
 const { response } = require('express');
 
 

@@ -1,17 +1,17 @@
 /* eslint-env node, mocha */
 
 const assert = require('chai').assert;
-const libunqfy = require('./unqfy');
-const Track = require('./track');
-const Album = require('./Album');
-const Artista = require('./Artista');
-const Buscador = require('./Buscador');
-const GeneradorDeClaves = require('./GeneradorDeClaves');
-const Usuario = require('./Usuario');
-const Playlist = require('./PlayList');
-const Errores = require('./Errores');
-const ApiCaller = require('./ApiCaller');
-const spotifyCreds = require('./spotifyCreds.json');
+const libunqfy = require('./service/unqfy');
+const Track = require('./service/track');
+const Album = require('./service/Album');
+const Artista = require('./service/Artista');
+const Buscador = require('./auxiliares/Buscador');
+const GeneradorDeClaves = require('./auxiliares/GeneradorDeClaves');
+const Usuario = require('./service/Usuario');
+const Playlist = require('./service/PlayList');
+const Errores = require('./errores/Errores');
+const ApiCaller = require('./auxiliares/ApiCaller');
+const spotifyCreds = require('./auxiliares/spotifyCreds.json');
 const fs = require('fs');
 
 function createAndAddArtist(unqfy, artistName, country) {

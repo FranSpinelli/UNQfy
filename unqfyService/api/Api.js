@@ -1,8 +1,8 @@
 const funciones = require('./Comandos.js');
 const bodyParser = require('body-parser');
-const ErroresApi = require('./ErroresApi');
-const Errores = require('./Errores.js');
-const errorHandler = require('./ApiErrorHandler.js');
+const ErroresApi = require('../errores/ErroresApi');
+const Errores = require('../errores/Errores');
+const errorHandler = require('./ApiErrorHandler');
 
 const port = 8080;
 //const unqfy = funciones.getUNQfy();

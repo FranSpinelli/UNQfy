@@ -1,5 +1,5 @@
-const apiErrors = require("./ErroresApi.js");
-const errores = require('./Errores.js');
+const apiErrors = require("../errores/ErroresApi");
+const errores = require('../errores/Errores');
 
 function errorHandler(err, req, res, next) {
     
