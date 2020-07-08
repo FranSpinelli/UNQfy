@@ -146,12 +146,34 @@ tracks.route('/tracks/:id/lyrics')
         throw error;
     });
 })
-
+//---------------------------------------------------------------------------------------
 playlists.route('/playlists')
 .get((req,res) => {
     
+    playlistsMissingValueChecking(req);
+    let unqfy = funciones.getUNQfy();
+    let playlists = unqfy.getPlayLists();
+    
+    let lista1 = [];
+    let lista2 = [];
+    let lista3 = [];
+
+    if(req.query.name !== undefined) {lista1 = unqfy.searchByName(req.query.name).playlists}
+    if(req.query.durationLT !== undefined) {lista2 = playlists.filter(playlist => playlist.duracion < (req.query.durationLT))}
+    if(req.query.durationGT !== undefined) {lista3 = playlists.filter(playlist => playlist.duracion > (req.query.durationGT))}
+
+    let responseData = intersectionOfLists(lista1, lista2, lista3);
+    res.status(200).json(responseData);
+}).post((req, res) =>{
+    
+    let unqfy = funciones.getUNQfy();
+    let nuevaPlaylist = unqfy.createPlaylist(req.body.name, req.body.genres, req.body.maxDuration);
+    funciones.saveUNQfy(unqfy);
+
+    res.status(200).json(nuevaPlaylist);
 });
 
+//--------------------------------------------------------------------------------------
 rootApp.use('/api', artists, albums, tracks,playlists);
 rootApp.use(function(req,res){
     throw new ErroresApi.WrongRoute();
@@ -206,4 +228,15 @@ function albumMissingValueChecking(request){
     if(request.body.artistId === undefined || request.body.name === undefined || request.body.year === undefined){
         throw new ErroresApi.MissingValue()
     }
+}
+
+function playlistsMissingValueChecking(request){
+    if(request.query.name === undefined && request.query.durationLT === undefined && 
+    request.query.durationGT === undefined){
+        throw new ErroresApi.MissingValue();
+    }
+}
+
+function intersectionOfLists(){
+    return Array.from(arguments).reduce((a, b) => a.filter(c => b.includes(c)));
 }
