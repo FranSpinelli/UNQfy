@@ -10,7 +10,8 @@ const Buscador = require('../auxiliares/Buscador');
 const Errores = require('../errores/Errores');
 const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
-const ApiCaller = require('../auxiliares/ApiCaller');
+const SpotifyClient = require('../auxiliares/SpotifyClient');
+const MusixMatchClient = require ('../auxiliares/MusixMatchClient');
 const { response } = require('express');
 
 
@@ -19,7 +20,8 @@ class UNQfy {
   constructor(){
     this._generadorDeClaves = new GeneradorDeClaves();
     this._buscador = new Buscador();
-    this._apiCaller = new ApiCaller();
+    this._spotifyClient = new SpotifyClient();
+    this._musixMatchClient = new MusixMatchClient();
 
     this._artistas = [];
     this._playList = [];
@@ -211,7 +213,7 @@ class UNQfy {
   }
 
   populate(unArtista){
-    return this._apiCaller.getArtistAlbums(unArtista.nombre).then((response)=> {
+    return this._spotifyClient.getArtistAlbums(unArtista.nombre).then((response)=> {
       let populatedAlbums = [];
 
       response.items.reduce( (lista, album) => {
@@ -239,7 +241,7 @@ class UNQfy {
     if(track === undefined){
       return Promise.reject(new Errores.NoExisteElementoConID("Track", trackID));
     }else{
-      return track.getLyrics(this._apiCaller); 
+      return track.getLyrics(this._musixMatchClient); 
     }
   }
 
@@ -254,7 +256,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, Buscador, GeneradorDeClaves, ApiCaller, Artista, Album, Track];
+    const classes = [UNQfy, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 

@@ -16,10 +16,10 @@ class Track {
     get albumAlquePertenece(){return this._albumAlquePertenece;}
     get id(){return this._id;}
 
-    getLyrics(unApiCaller){
+    getLyrics(unAPIClient){
         if(this._lyrics === undefined){
     
-            return  unApiCaller.getTrackLyrics(this._titulo, this._albumAlquePertenece.autor.nombre).then( response => {
+            return  unAPIClient.getTrackLyrics(this._titulo, this._albumAlquePertenece.autor.nombre).then( response => {
                 this._lyrics = response.message.body.lyrics.lyrics_body;
             }).then(() => {
                 return this._lyrics;

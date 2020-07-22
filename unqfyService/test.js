@@ -10,7 +10,8 @@ const GeneradorDeClaves = require('./auxiliares/GeneradorDeClaves');
 const Usuario = require('./service/Usuario');
 const Playlist = require('./service/PlayList');
 const Errores = require('./errores/Errores');
-const ApiCaller = require('./auxiliares/ApiCaller');
+const SpotifyClient = require('./auxiliares/SpotifyClient');
+const MusixMatchClient = require('./auxiliares/MusixMatchClient');
 const spotifyCreds = require('./auxiliares/spotifyCreds.json');
 const fs = require('fs');
 
@@ -223,12 +224,12 @@ describe('Track tests', function() {
   this.timeout(10000);
   let album;
   let track;
-  let apiCaller;
+  let musixMatchClient;
 
   beforeEach(() => {
     album = new Album("unNombre", 1978)
     track = new Track("unTitulo", ["genero1", "genero2"], 100, album, 1);
-    apiCaller = new ApiCaller();
+    musixMatchClient = new MusixMatchClient();
   })
 
   it('chequeo de constructor y getters', () => {
@@ -246,7 +247,7 @@ describe('Track tests', function() {
     let album1 = new Album("lol", 2010, 1, autor);
     let despacito = new Track("Despacito", ['1','2'], 20, album1, 1);
 
-    return despacito.getLyrics(apiCaller).then( (respuesta) =>{
+    return despacito.getLyrics(musixMatchClient).then( (respuesta) =>{
 
       assert.equal(respuesta, "Comin' over in my direction\nSo thankful for that, it's such a blessin', yeah\nTurn every situation into heaven, yeah\n\nOh-oh, you are my sunrise on the darkest day\nGot me feelin' some kind of way\nMake me wanna savor every moment slowly, slowly\n\nYou fit me tailor-made, love how you put it on\nGot the only key, know how to turn it on\nThe way you nibble on my ear, the only words I wanna hear\nBaby, take it slow so we can last long (oh)\n\nTú, tú eres el imán y yo soy el metal\nMe voy acercando y voy armando el plan\nSólo con pensarlo se acelera el pulso (oh, yeah)\n\nYa, ya me estás gustando más de lo normal\nTodos mis sentidos van pidiendo más\nEsto hay que tomarlo sin ningún apuro\n\nDespacito\nQuiero respirar tu cuello despacito\nDeja que te diga cosas al oído\nPara que te acuerdes si no estás conmigo\n\nDespacito\nQuiero desnudarte a besos despacito\nFirmar las paredes de tu laberinto\nY hacer de tu cuerpo todo un manuscrito (sube, sube, sube)\nSube, sube (oh)\n...\n\n******* This Lyrics is NOT for Commercial use *******\n(1409620049094)")
     })
@@ -379,41 +380,43 @@ describe('GeneradorDeClaves tests', () => {
   })
 })
 
-describe ('ApiCaller tests', function() {
-  let apicaller;
+describe ('ApiClients tests', function() {
+  let musixMatchClient;
+  let spotifyClient;
   this.timeout(10000);
 
   beforeEach(() => {
-    apicaller = new ApiCaller();
+    musixMatchClient = new MusixMatchClient();
+    spotifyClient = new SpotifyClient();
   })
 
-  it('un ApiCaller puede retornar el ID de una Track en MusicxMatch a partir de su nombre y artista', function(){
+  it('un MusixMatchClient puede retornar el ID de una Track en MusicxMatch a partir de su nombre y artista', function(){
 
-    return apicaller.getTrackID('Despacito', 'Luis Fonsi').then(response =>{
+    return musixMatchClient.getTrackID('Despacito', 'Luis Fonsi').then(response =>{
 
       assert.equal(response.message.body.track_list[0].track.track_id,152921994);
     })
   })
 
-  it('un ApiCaller puede retornar la letra de una Track, de MusicxMatch a partir de su nombre y artista', function(){
+  it('un MusixMatchClient puede retornar la letra de una Track, de MusicxMatch a partir de su nombre y artista', function(){
 
-    return apicaller.getTrackLyrics('Despacito', 'Luis Fonsi').then(response =>{
+    return musixMatchClient.getTrackLyrics('Despacito', 'Luis Fonsi').then(response =>{
 
       assert.equal(response.message.body.lyrics.lyrics_body, "Comin' over in my direction\nSo thankful for that, it's such a blessin', yeah\nTurn every situation into heaven, yeah\n\nOh-oh, you are my sunrise on the darkest day\nGot me feelin' some kind of way\nMake me wanna savor every moment slowly, slowly\n\nYou fit me tailor-made, love how you put it on\nGot the only key, know how to turn it on\nThe way you nibble on my ear, the only words I wanna hear\nBaby, take it slow so we can last long (oh)\n\nTú, tú eres el imán y yo soy el metal\nMe voy acercando y voy armando el plan\nSólo con pensarlo se acelera el pulso (oh, yeah)\n\nYa, ya me estás gustando más de lo normal\nTodos mis sentidos van pidiendo más\nEsto hay que tomarlo sin ningún apuro\n\nDespacito\nQuiero respirar tu cuello despacito\nDeja que te diga cosas al oído\nPara que te acuerdes si no estás conmigo\n\nDespacito\nQuiero desnudarte a besos despacito\nFirmar las paredes de tu laberinto\nY hacer de tu cuerpo todo un manuscrito (sube, sube, sube)\nSube, sube (oh)\n...\n\n******* This Lyrics is NOT for Commercial use *******\n(1409620049094)");
     })
   })
 
-  it('un ApiCaller puede retornar el ID de una Track en Spotify a partir de su nombre y artista', function(){
+  it('un SpotifyClient puede retornar el ID de una Track en Spotify a partir de su nombre y artista', function(){
 
-    return apicaller.getArtistID('Luis Fonsi').then((response) =>{
+    return spotifyClient.getArtistID('Luis Fonsi').then((response) =>{
 
       assert.equal(response.artists.items[0].id,'4V8Sr092TqfHkfAA5fXXqG');
     })
   })
 
-  it('un ApiCaller puede retornar los albums en spotify de un artista a partir de su nombre y artista', function(){
+  it('un SpotifyClient puede retornar los albums en spotify de un artista a partir de su nombre y artista', function(){
 
-    return apicaller.getArtistAlbums('Luis Fonsi').then((response) =>{
+    return spotifyClient.getArtistAlbums('Luis Fonsi').then((response) =>{
 
       assert.equal(response.items.length,20);
     })
