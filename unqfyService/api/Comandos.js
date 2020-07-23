@@ -1,42 +1,49 @@
 const fs = require('fs'); // necesitado para guardar/cargar unqfy
 const unqmod = require('../service/unqfy'); // importamos el modulo unqfy
+const NotificationServiceClient = require('../auxiliares/NotificationServiceClient');
 
-
-
-function getUNQfy(filename = 'data.json') {
-    let unqfy = new unqmod.UNQfy();
+function getUNQfy(incluirNotiServiceComoObserver = "true", filename = 'data.json') {
+    let unqfy;
     if (fs.existsSync(filename)) {
-      unqfy = unqmod.UNQfy.load(filename);
+        unqfy = unqmod.UNQfy.load(filename);
+    }else{
+        if("true" == incluirNotiServiceComoObserver){
+            unqfy = new unqmod.UNQfy()
+            notificationClient = new NotificationServiceClient();
+            unqfy.addNewSubscriber(notificationClient)
+        }else{
+            unqfy = new unqmod.UNQfy();
+        }
     }
     return unqfy;
-  }
+}
   
-  function saveUNQfy(unqfy, filename = 'data.json') {
+function saveUNQfy(unqfy, filename = 'data.json') {
     unqfy.save(filename);
-  }
+}
 
-  class Comando{
+class Comando{
       
-      //anto
+    //anto
     /*
     static mapearListaDePlayList(listaDePlayList) {
-            if (listaDePlayList.length > 0) {
-                let resultado = [];
-                listaDePlayList.forEach(playList => {
-                    let mappedPlayLsit = {
-                        nombre: playList.nombre,
-                        duracion: playList.duracion,
-                        genero: playList.genero.map(playList => playList.genero).toString(),
-                        tracks: playList.tracks.map(playList => playList.tracks).flat().map(track => track.titulo).toString()
-                    }
-                    resultado.push(mappedPlayLsit);
-                })
-                return resultado;
-            } else {
-                return "No existe ninguna PlayList con ese nombre"
-            }
+        if (listaDePlayList.length > 0) {
+            let resultado = [];
+            listaDePlayList.forEach(playList => {
+                let mappedPlayLsit = {
+                    nombre: playList.nombre,
+                    duracion: playList.duracion,
+                    genero: playList.genero.map(playList => playList.genero).toString(),
+                    tracks: playList.tracks.map(playList => playList.tracks).flat().map(track => track.titulo).toString()
+                }
+                resultado.push(mappedPlayLsit);
+            })
+            return resultado;
+        } else {
+            return "No existe ninguna PlayList con ese nombre"
         }
-        */
+    }
+    */
     //anto
 
     static mapearListaDeArtistas(listaDeArtistas){

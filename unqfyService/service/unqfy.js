@@ -12,6 +12,8 @@ const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
 const SpotifyClient = require('../auxiliares/SpotifyClient');
 const MusixMatchClient = require ('../auxiliares/MusixMatchClient');
+const ManejadorDeObservadores = require('../auxiliares/ManejadorDeObservadores');
+const NotificationServiceClient = require('../auxiliares/NotificationServiceClient');
 const { response } = require('express');
 
 
@@ -22,17 +24,14 @@ class UNQfy {
     this._buscador = new Buscador();
     this._spotifyClient = new SpotifyClient();
     this._musixMatchClient = new MusixMatchClient();
+    this._manejadorDeObservadores = new ManejadorDeObservadores()
 
     this._artistas = [];
     this._playList = [];
   }
-  
-  capitalize(unString){
-    let listaDelString = unString.split("");
-    let primeraletraEnMayuscula = unString.split("")[0].toUpperCase();
-    listaDelString[0] = primeraletraEnMayuscula;
-    return listaDelString.join("");
-  }
+
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--ACCIONES DE MANEJOS DEL MODELO---------------------------------------------------------------------------------------
 
   addArtist(artistData) {
       if(this._buscador.hayArtistaConData(artistData,this._artistas)){
@@ -42,8 +41,17 @@ class UNQfy {
       
         let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
         this._artistas.push(nuevoArtista);
+        
+        this._manejadorDeObservadores.notificarNuevoArtista(nuevoArtista.id)
         return nuevoArtista;
       }
+  }
+
+  capitalize(unString){
+    let listaDelString = unString.split("");
+    let primeraletraEnMayuscula = unString.split("")[0].toUpperCase();
+    listaDelString[0] = primeraletraEnMayuscula;
+    return listaDelString.join("");
   }
 
   addAlbum(artistId, albumData) {
@@ -59,6 +67,9 @@ class UNQfy {
       let nuevoID = this._generadorDeClaves.generarClaveDeAlbum();
       let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
       artistaConID.agregarAlbum(nuevoAlbum);
+
+      this._manejadorDeObservadores.notificarNuevoAlbum(artistId, artistaConID.nombre, nuevoAlbum.nombre);
+
       return nuevoAlbum;
     }
   }
@@ -111,6 +122,7 @@ class UNQfy {
     if(artistaAEliminar !== undefined){
       artistaAEliminar.albums.forEach(album => this.eliminarAlbum(album.id));
       this._artistas = this._artistas.filter(artista => artista.id !== artistaID);
+      this._manejadorDeObservadores.notificarEliminadoDeArtista(artistaID);
     }else{
       throw new Errores.NoExisteElementoConID("artista", artistaID);
     }
@@ -139,6 +151,9 @@ class UNQfy {
       throw new Errores.NoExisteElementoConID("track", trackID);
     }
   }
+
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--BUSQUEDAS------------------------------------------------------------------------------------------------------------
 
   getArtistas(){
     return this._artistas;
@@ -201,6 +216,9 @@ class UNQfy {
     return this._buscador.getTracksDeArtistaConNombre(artistName, this._artistas);
   }
 
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--ACCIONES QUE CONSUMEN DE OTRAS API'S---------------------------------------------------------------------------------
+
   populateAlbumsForArtist(unIDdeArtista){
     let artista = this._buscador.getArtistaConID(unIDdeArtista, this._artistas);
 
@@ -245,6 +263,16 @@ class UNQfy {
     }
   }
 
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--NOTIFICACION DE CAMBIO-----------------------------------------------------------------------------------------------
+
+  addNewSubscriber(nuevoSus){
+    this._manejadorDeObservadores.agregarObservador(nuevoSus);
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--PERSISTIR------------------------------------------------------------------------------------------------------------
+
   save(filename) {
     const listenersBkp = this.listeners;
     this.listeners = [];
@@ -256,7 +284,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track];
+    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 

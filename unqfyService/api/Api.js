@@ -4,6 +4,8 @@ const ErroresApi = require('../errores/ErroresApi');
 const Errores = require('../errores/Errores');
 const errorHandler = require('./ApiErrorHandler');
 
+let agregarNotificationServiceClientComoObservador = process.argv[2];
+
 const port = 8080;
 //const unqfy = funciones.getUNQfy();
 
@@ -23,7 +25,8 @@ rootApp.route('/api').get((req,res) => {
 artists.route('/artists')
 .get((req, res) => {
     
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
+    
     let artistas = []
     if (req.query.name){
         artistas = unqfy.searchByName(req.query.name).artists.map(artista => {    
@@ -38,7 +41,7 @@ artists.route('/artists')
 }).post((req,res) => {
 
     artistMissingValueChecking(req);
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let nuevoArtista = unqfy.addArtist(req.body);
     funciones.saveUNQfy(unqfy);
 
@@ -48,12 +51,12 @@ artists.route('/artists')
 artists.route('/artists/:id')
 .get((req, res) =>{
     
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let artista = unqfy.getArtistaConID(parseInt(req.params.id));
     res.status(200).json(returnedArtist(artista));
 }).delete((req,res) => {
     
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     unqfy.eliminarArtista(parseInt(req.params.id));
     funciones.saveUNQfy(unqfy);
 
@@ -61,7 +64,7 @@ artists.route('/artists/:id')
 }).patch((req,res) => {
     
     artistMissingValueChecking(req);
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let artista = unqfy.getArtistaConID(parseInt(req.params.id));  
     
     artista.nombre = req.body.name;
@@ -73,7 +76,7 @@ artists.route('/artists/:id')
 //--------------------------------------------------------------------------------------------------------------
 albums.route('/albums').get((req,res) => {
     
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let albums = []
     if (req.query.name){
         albums = unqfy.searchByName(req.query.name).albums.map(album => {
@@ -88,7 +91,7 @@ albums.route('/albums').get((req,res) => {
 }).post((req,res) => {
     albumMissingValueChecking(req);
     try{
-        let unqfy = funciones.getUNQfy();
+        let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
         let nuevoAlbum = unqfy.addAlbum(req.body.artistId, req.body);
         funciones.saveUNQfy(unqfy);
 
@@ -104,13 +107,13 @@ albums.route('/albums').get((req,res) => {
 
 albums.route('/albums/:id')
 .get((req,res) => {
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let album = unqfy.getAlbumConID(parseInt(req.params.id));
 
     res.status(200).json(returnedAlbum(album));
 }).delete((req,res) => {
 
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     unqfy.eliminarAlbum(parseInt(req.params.id));
     funciones.saveUNQfy(unqfy);
 
@@ -120,7 +123,7 @@ albums.route('/albums/:id')
         throw new ErroresApi.MissingValue()
     }
 
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let album = unqfy.getAlbumConID(parseInt(req.params.id));    
     album.añoDeLanzamiento = req.body.year;
     funciones.saveUNQfy(unqfy);
@@ -131,7 +134,7 @@ albums.route('/albums/:id')
 tracks.route('/tracks/:id/lyrics')
 .get((req,res) => {
 
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let track = unqfy.getTrackConID(parseInt(req.params.id));
     unqfy.getTrackLyrics(parseInt(req.params.id)).then( response => {
         
@@ -151,7 +154,7 @@ playlists.route('/playlists')
 .get((req,res) => {
     
     playlistsMissingValueChecking(req);
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let playlists = unqfy.getPlayLists();
     
     let lista1 = [];
@@ -166,7 +169,7 @@ playlists.route('/playlists')
     res.status(200).json(responseData);
 }).post((req, res) =>{
     
-    let unqfy = funciones.getUNQfy();
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let nuevaPlaylist = unqfy.createPlaylist(req.body.name, req.body.genres, req.body.maxDuration);
     funciones.saveUNQfy(unqfy);
 
