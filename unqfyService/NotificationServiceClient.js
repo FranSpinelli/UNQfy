@@ -1,6 +1,11 @@
 const rp = require('request-promise');
+const UNQfyObservator = require('./UNQfyObservator');
 
-class NotificationServiceClient{
+class NotificationServiceClient extends UNQfyObservator{
+
+    constructor(){
+        super(true,true)
+    }
 
     notificarDeAgregarArtista(artistaID){
         let options = {
@@ -8,8 +13,10 @@ class NotificationServiceClient{
             uri: 'http://localhost:8090/api/artist?id=' + artistaID,
             json: true 
         };
-         
-        rp(options);
+        
+        rp(options).catch( error => {
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+        });
     }
 
     notificarDeEliminarArtista(artistaID){
@@ -18,8 +25,10 @@ class NotificationServiceClient{
             uri: 'http://localhost:8090/api/artist?id=' + artistaID,
             json: true 
         };
-         
-        rp(options);
+        
+        rp(options).catch( error => {
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+        });
     }
 
     notificarDeNuevoAlbum(artistaID, nombreDelArtista, nombreDelAlbum){
@@ -36,8 +45,10 @@ class NotificationServiceClient{
             },
             json: true
         };
-         
-        rp(options)
+        
+        rp(options).catch( error => {
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+        })
     }
 }
 

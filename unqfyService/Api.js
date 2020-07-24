@@ -1,7 +1,7 @@
 const funciones = require('./Comandos.js');
 const bodyParser = require('body-parser');
-const ErroresApi = require('../errores/ErroresApi');
-const Errores = require('../errores/Errores');
+const ErroresApi = require('./ErroresApi');
+const Errores = require('./Errores');
 const errorHandler = require('./ApiErrorHandler');
 
 let agregarNotificationServiceClientComoObservador = process.argv[2];

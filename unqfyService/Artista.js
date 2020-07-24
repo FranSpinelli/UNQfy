@@ -1,4 +1,4 @@
-const Errores = require('../errores/Errores');
+const Errores = require('./Errores');
 
 class Artista{
 

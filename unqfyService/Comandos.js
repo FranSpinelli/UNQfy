@@ -1,6 +1,6 @@
 const fs = require('fs'); // necesitado para guardar/cargar unqfy
-const unqmod = require('../service/unqfy'); // importamos el modulo unqfy
-const NotificationServiceClient = require('../auxiliares/NotificationServiceClient');
+const unqmod = require('./unqfy'); // importamos el modulo unqfy
+const NotificationServiceClient = require('./NotificationServiceClient');
 
 function getUNQfy(incluirNotiServiceComoObserver = "true", filename = 'data.json') {
     let unqfy;

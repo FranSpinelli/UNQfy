@@ -5,15 +5,15 @@ const fs = require('fs');
 const Artista = require('./Artista');
 const Album = require('./Album');
 const Track = require('./track');
-const GeneradorDeClaves = require('../auxiliares/GeneradorDeClaves');
-const Buscador = require('../auxiliares/Buscador');
-const Errores = require('../errores/Errores');
+const GeneradorDeClaves = require('./GeneradorDeClaves');
+const Buscador = require('./Buscador');
+const Errores = require('./Errores');
 const PlayList = require('./PlayList');
 const Usuario = require('./Usuario');
-const SpotifyClient = require('../auxiliares/SpotifyClient');
-const MusixMatchClient = require ('../auxiliares/MusixMatchClient');
-const ManejadorDeObservadores = require('../auxiliares/ManejadorDeObservadores');
-const NotificationServiceClient = require('../auxiliares/NotificationServiceClient');
+const SpotifyClient = require('./SpotifyClient');
+const MusixMatchClient = require ('./MusixMatchClient');
+const ManejadorDeObservadores = require('./ManejadorDeObservadores');
+const NotificationServiceClient = require('./NotificationServiceClient');
 const { response } = require('express');
 
 
