@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 
-const manejadorDeSus = require('./manejadorDeSuscripciones.js');
-const errores = require('./errores');
+const manejadorDeSus = require('./ManejadorDeSuscripciones');
+const errores = require('./Errores');
 
 describe('Manejador de suscripciones', function() {
     let manejadorDeSuscripciones;

@@ -1,4 +1,4 @@
-let errores = require('./errores');
+const errores = require('./Errores');
 
 class ManejadorDeSuscripciones {
 

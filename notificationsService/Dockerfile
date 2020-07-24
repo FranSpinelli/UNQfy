@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # exponemos el puerto donde va a estar corriendo la app dentro del container
-EXPOSE 8080
+EXPOSE 8090
 
 # para que elimine el data.json si es que existe antes de correr el container y luego levante la api
-CMD rm -f data.json && node Api.js 
+CMD node Api.js 

@@ -5,12 +5,14 @@ class NotificationServiceClient extends UNQfyObservator{
 
     constructor(){
         super(true,true)
+        //this._baseURL = 'http://' + '172.20.0.22' + ':' + '8090' + '/api';
+        this._baseURL = 'http://' + 'localhost' + ':' + '8090' + '/api';
     }
 
     notificarDeAgregarArtista(artistaID){
         let options = {
             method: 'POST',
-            uri: 'http://localhost:8090/api/artist?id=' + artistaID,
+            uri: this._baseURL + '/artist?id=' + artistaID,
             json: true 
         };
         
@@ -22,7 +24,7 @@ class NotificationServiceClient extends UNQfyObservator{
     notificarDeEliminarArtista(artistaID){
         let options = {
             method: 'DELETE',
-            uri: 'http://localhost:8090/api/artist?id=' + artistaID,
+            uri: this._baseURL + '/artist?id=' + artistaID,
             json: true 
         };
         
@@ -37,7 +39,7 @@ class NotificationServiceClient extends UNQfyObservator{
 
         let options = {
             method: 'POST',
-            uri: 'http://localhost:8090/api/notify',
+            uri: this._baseURL + '/notify',
             body: {
                 artistID: artistaID,
                 subject: sub,
