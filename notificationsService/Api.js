@@ -70,17 +70,14 @@ router.post('/notify', (req, res, next) => {
 
     chequearBody(req.body.artistID, req.body.subject, req.body.message);
     notificationService.enviarMensajeASuscriptoresDe(req.body.artistID, req.body.subject, req.body.message).then(response => {
-        response.then(resp => {
+        
+        Promise.all(response).then(resp => {
             res.sendStatus(200);
         }).catch(error => {
             res.sendStatus(200);
         })
     }).catch(error => {
-        /*if(error){  
-            next(new errores.NotificationError())*/
-        //}else{
             next(error)
-        //}
     })
 })
 
@@ -96,9 +93,11 @@ app.listen(port, () => console.log('where magic happens'));
 
 //-----------------------------------------------------------------------------------
 
-function analizarJSONRecibido(json,){
+function analizarJSONRecibido(json){
 
-    if(json.artistID === undefined || json.email === undefined){
+    let regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if(json.artistID === undefined || json.email === undefined || !regex.test(json.email)){
         throw new errores.InvalidJSON();
     }
 }

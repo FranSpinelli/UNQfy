@@ -1,4 +1,4 @@
-const comandos = require('./api/Comandos');
+const comandos = require('./Comandos');
 
 function ejecutarComandoCon(unStringDeComando, unaListaDeArgumentos){
 

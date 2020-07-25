@@ -16,7 +16,7 @@ class NotificationService {
 
             this._manejadorDeSuscripciones.agregarSuscripcionAArtista(artistaID,email);
         }).catch(error => {
-            
+    
             this.analizarError(error);
         })
     }
@@ -53,27 +53,24 @@ class NotificationService {
 
     enviarMensajeASuscriptoresDe(artistaID, subject, message){
         return this._unqfyClient.getArtistaConID(artistaID).then(res => {
-
             let listaDeMails = this._manejadorDeSuscripciones.suscriptoresDe(artistaID);
-            return this.realizarEnvio(listaDeMails);
+            return this.realizarEnvio(listaDeMails, subject, message);
         }).catch(err => {
-            
             this.analizarError(err);
         })
     }
 
-    realizarEnvio(listaDeMails){
+    realizarEnvio(listaDeMails, subject, message){
         let promiseList = [];
         listaDeMails.forEach( mail => {
             let mailPromise = this._mailSender.enviarMailCon(subject, message, mail);
             promiseList.push(mailPromise);
         })
 
-        return Promise.all(promiseList);
+        return promiseList;
     }
 
     analizarError(error){
-        
         if(error.error.errorCode === "RESOURCE_NOT_FOUND"){
             throw new errores.ArtistaInexistenteError();
         }else{
