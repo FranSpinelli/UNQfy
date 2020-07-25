@@ -1,7 +1,7 @@
 const errores = require('./Errores');
 
 function errorHandler(err, req, res, next) {
-
+ 
     if (err instanceof errores.NotificationError){
       res.status(err.status);
       res.json({status: err.status, errorCode: err.errorCode});

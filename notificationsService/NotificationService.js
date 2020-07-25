@@ -16,7 +16,7 @@ class NotificationService {
 
             this._manejadorDeSuscripciones.agregarSuscripcionAArtista(artistaID,email);
         }).catch(error => {
-
+            
             this.analizarError(error);
         })
     }
@@ -73,7 +73,8 @@ class NotificationService {
     }
 
     analizarError(error){
-        if(error.errorCode === "RESOURCE_NOT_FOUND"){
+        
+        if(error.error.errorCode === "RESOURCE_NOT_FOUND"){
             throw new errores.ArtistaInexistenteError();
         }else{
             throw error;
