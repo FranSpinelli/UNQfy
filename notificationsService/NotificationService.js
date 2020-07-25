@@ -1,50 +1,83 @@
-;
 const {EmailSender} = require('./EmailSender');
 const {ManejadorDeSuscripciones} = require('./ManejadorDeSuscripciones');
-
+const UNQfyClient = require('./unqfyClient');
+const errores = require('./Errores');
 
 class NotificationService {
 
     constructor() {
         this._mailSender = new EmailSender();
         this._manejadorDeSuscripciones = new ManejadorDeSuscripciones();
-    }
-    
-    agregarArtista(artistaID){
-        this._manejadorDeSuscripciones.agregarArtista(artistaID);
-    }
-
-    eliminarArtista(artistaID){
-        this._manejadorDeSuscripciones.quitarArtista(artistaID);
+        this._unqfyClient = new UNQfyClient();
     }
 
     agregarSuscriptorAArtistaConID(artistaID, email){
-        this._manejadorDeSuscripciones.agregarSuscripcionAArtista(artistaID,email);
+        return this._unqfyClient.getArtistaConID(artistaID).then(res => {
+
+            this._manejadorDeSuscripciones.agregarSuscripcionAArtista(artistaID,email);
+        }).catch(error => {
+
+            this.analizarError(error);
+        })
     }
 
-    eliminarSuscriptosAArtistaConID(artistaID, email){
-        this._manejadorDeSuscripciones.quitarSuscripcionAArtista(artistaID,email);
+    eliminarSuscriptorAArtistaConID(artistaID, email){
+        return this._unqfyClient.getArtistaConID(artistaID).then(res => {
+
+            this._manejadorDeSuscripciones.quitarSuscripcionAArtista(artistaID,email);  
+        }).catch(error => {
+
+            this.analizarError(error);
+        })
     }
 
-    getSuscripcionesDe(artistaID){
-        return this._manejadorDeSuscripciones.suscriptoresDe(artistaID)
+    getSuscripcionesDe(artistaID){        
+        return this._unqfyClient.getArtistaConID(artistaID).then(res => {
+
+            return this._manejadorDeSuscripciones.suscriptoresDe(artistaID);
+        }).catch(error => {
+
+            this.analizarError(error);
+        })
     }
 
     eliminarSuscriptoresDeArtistaConID(artistaID){
-        this._manejadorDeSuscripciones.eliminarTodosLosSuscriptoresDe(artistaID)
+        return this._unqfyClient.getArtistaConID(artistaID).then(res => {
+
+            this._manejadorDeSuscripciones.eliminarTodosLosSuscriptoresDe(artistaID)
+        }).catch(error => {
+
+            this.analizarError(error);
+        })
     }
 
     enviarMensajeASuscriptoresDe(artistaID, subject, message){
-        
-        let listaDeMails = this._manejadorDeSuscripciones.suscriptoresDe(artistaID);
-        let promiseList = [];
+        return this._unqfyClient.getArtistaConID(artistaID).then(res => {
 
+            let listaDeMails = this._manejadorDeSuscripciones.suscriptoresDe(artistaID);
+            return this.realizarEnvio(listaDeMails);
+        }).catch(err => {
+            
+            this.analizarError(err);
+        })
+    }
+
+    realizarEnvio(listaDeMails){
+        let promiseList = [];
         listaDeMails.forEach( mail => {
             let mailPromise = this._mailSender.enviarMailCon(subject, message, mail);
             promiseList.push(mailPromise);
         })
 
         return Promise.all(promiseList);
+    }
+
+    analizarError(error){
+        if(error.errorCode === "RESOURCE_NOT_FOUND"){
+            throw new errores.ArtistaInexistenteError();
+        }else{
+            throw error;
+        }
     }
 }
 

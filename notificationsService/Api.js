@@ -19,64 +19,68 @@ router.get('/', (req,res) => {
 });
 //---------------------------------------------------------------------------------
 
-router.post('/artist', (req,res) => {
-
-    chequearParametroDeLaQuery(req.query.id);
-    notificationService.agregarArtista(parseInt(req.query.id));
-    res.sendStatus(200);
-})
-
-router.delete('/artist', (req, res) => {
-
-    chequearParametroDeLaQuery(req.query.id);
-    notificationService.eliminarArtista(parseInt(req.query.id));
-    res.sendStatus(200);
-})
-
-router.post('/subscribe', (req, res) => {
+router.post('/subscribe', (req, res, next) => {
 
     analizarJSONRecibido(req.body)
-    notificationService.agregarSuscriptorAArtistaConID(req.body.artistID, req.body.email);
-    res.sendStatus(200);
-  
+    notificationService.agregarSuscriptorAArtistaConID(req.body.artistID, req.body.email).then(respuesta => {
+        res.sendStatus(200);
+    }).catch(error => {
+        next(error);
+    });
 })
 
-router.post('/unsubscribe', (req,res) => {
+router.post('/unsubscribe', (req,res,next) => {
 
     analizarJSONRecibido(req.body)
-    notificationService.agregarSuscriptorAArtistaConID(req.body.artistID, req.body.email);
-    res.sendStatus(200);
+    notificationService.eliminarSuscriptorAArtistaConID(req.body.artistID, req.body.email).then(respuesta => {
+        res.sendStatus(200);
+    }).catch(error => {
+        next(error);
+    });
+    
 })
 
-router.get('/subscriptions', (req,res) => {
+router.get('/subscriptions', (req,res,next) => {
 
     chequearParametroDeLaQuery(req.query.artistID);
-    let listaDeSuscriptores = notificationService.getSuscripcionesDe(parseInt(req.query.artistID));
-    let response = {
-        artistID: req.query.artistID,
-        suscriptors : listaDeSuscriptores
-    }
-
-    res.status(200).json(response);
+    notificationService.getSuscripcionesDe(parseInt(req.query.artistID)).then(respuesta => {
+        let response = {
+            artistID: req.query.artistID,
+            suscriptors : respuesta
+        }
+        res.status(200).json(response);
+    }).catch(error => {
+        next(error);
+    });
 })
 
-router.delete('/subscriptions', (req, res) => {
+router.delete('/subscriptions', (req, res, next) => {
 
     if(req.body.artistID === undefined){
         throw new errores.InvalidJSON();
     }
-    notificationService.eliminarSuscriptoresDeArtistaConID(req.body.artistID);
-    res.sendStatus(200);
+    notificationService.eliminarSuscriptoresDeArtistaConID(req.body.artistID).then(response => {
+        res.sendStatus(200);
+    }).catch(error => {
+        next(error)
+    });
 })
 
 router.post('/notify', (req, res, next) => {
 
     chequearBody(req.body.artistID, req.body.subject, req.body.message);
     notificationService.enviarMensajeASuscriptoresDe(req.body.artistID, req.body.subject, req.body.message).then(response => {
-        res.sendStatus(200);
+        response.then(resp => {
+            res.sendStatus(200);
+        }).catch(error => {
+            res.sendStatus(200);
+        })
     }).catch(error => {
-        //NO SE POR Q CON THROW NO FUNCIONABA
-        next(new errores.NotificationError())
+        /*if(error){  
+            next(new errores.NotificationError())*/
+        //}else{
+            next(error)
+        //}
     })
 })
 

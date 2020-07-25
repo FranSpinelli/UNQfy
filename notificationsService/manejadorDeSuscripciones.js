@@ -1,5 +1,3 @@
-const errores = require('./Errores');
-
 class ManejadorDeSuscripciones {
 
     constructor(){
@@ -8,17 +6,6 @@ class ManejadorDeSuscripciones {
 
     get suscripcionesMap(){return this._suscripcionesMap;}
 
-    agregarArtista(artistaID){
-
-        if(!this._suscripcionesMap.has(artistaID)){
-            this._suscripcionesMap.set(artistaID,[]);
-        }
-    }
-
-    quitarArtista(artistaID){
-        this._suscripcionesMap.delete(artistaID);
-    }
-
     agregarSuscripcionAArtista(artistaID, emailDeSuscriptor){
 
         let listaDeMails = this._suscripcionesMap.get(artistaID);
@@ -26,7 +13,7 @@ class ManejadorDeSuscripciones {
         if(listaDeMails !== undefined){
             this.agregarSuscriptorSiNoEstaSuscripto(listaDeMails, emailDeSuscriptor);
         }else{
-            throw new errores.ArtistaInexistenteError();
+            this._suscripcionesMap.set(artistaID, [emailDeSuscriptor]);
         }
     }
 
@@ -43,8 +30,6 @@ class ManejadorDeSuscripciones {
 
         if(listaDeMails !== undefined){
             this.eliminarSuscriptorSiEstaSuscripto(listaDeMails, emailDeSuscriptor);
-        }else{
-            throw new errores.ArtistaInexistenteError()        
         }
     }
 
@@ -62,19 +47,15 @@ class ManejadorDeSuscripciones {
         let listaDeMails = this._suscripcionesMap.get(artistaID);
 
         if(listaDeMails !== undefined){
-            return listaDeMails
+            return listaDeMails;
         }else{
-            throw new errores.ArtistaInexistenteError();
+            return [];
         }
     }
 
     eliminarTodosLosSuscriptoresDe(artistaID){
-
-        if(!this._suscripcionesMap.delete(artistaID)){
-            throw new errores.ArtistaInexistenteError();
-        }else{
-            this._suscripcionesMap.set(artistaID, []);
-        }
+        
+        this._suscripcionesMap.delete(artistaID)
     }
 }
 
