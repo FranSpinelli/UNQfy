@@ -14,6 +14,7 @@ const SpotifyClient = require('./SpotifyClient');
 const MusixMatchClient = require ('./MusixMatchClient');
 const ManejadorDeObservadores = require('./ManejadorDeObservadores');
 const NotificationServiceClient = require('./NotificationServiceClient');
+const ServicioExternoAlbumObservator = require('./ServicioExternoAlbumObservator');
 const { response } = require('express');
 
 
@@ -24,7 +25,7 @@ class UNQfy {
     this._buscador = new Buscador();
     this._spotifyClient = new SpotifyClient();
     this._musixMatchClient = new MusixMatchClient();
-    this._manejadorDeObservadores = new ManejadorDeObservadores()
+    this._manejadorDeObservadores = new ManejadorDeObservadores();
 
     this._artistas = [];
     this._playList = [];
@@ -42,7 +43,6 @@ class UNQfy {
         let nuevoArtista = new Artista(artistData.name, artistData.bornDate, this.capitalize(artistData.country), nuevoID)
         this._artistas.push(nuevoArtista);
         
-        this._manejadorDeObservadores.notificarNuevoArtista(nuevoArtista.id)
         return nuevoArtista;
       }
   }
@@ -68,8 +68,12 @@ class UNQfy {
       let nuevoAlbum = new Album(albumData.name, albumData.year, nuevoID, artistaConID);
       artistaConID.agregarAlbum(nuevoAlbum);
 
-      this._manejadorDeObservadores.notificarNuevoAlbum(artistId, artistaConID.nombre, nuevoAlbum.nombre);
-
+      let jsOBJ = {
+        artistaID: artistId,
+        nombreDeArtista: artistaConID.nombre,
+        nombreDeAlbum: albumData.name
+      }
+      this._manejadorDeObservadores.updateDeAgregadoDeAlbum(jsOBJ);
       return nuevoAlbum;
     }
   }
@@ -122,7 +126,6 @@ class UNQfy {
     if(artistaAEliminar !== undefined){
       artistaAEliminar.albums.forEach(album => this.eliminarAlbum(album.id));
       this._artistas = this._artistas.filter(artista => artista.id !== artistaID);
-      this._manejadorDeObservadores.notificarEliminadoDeArtista(artistaID);
     }else{
       throw new Errores.NoExisteElementoConID("artista", artistaID);
     }
@@ -264,7 +267,7 @@ class UNQfy {
   }
 
   //-----------------------------------------------------------------------------------------------------------------------
-  //--NOTIFICACION DE CAMBIO-----------------------------------------------------------------------------------------------
+  //--OBSERVADORES---------------------------------------------------------------------------------------------------------
 
   addNewSubscriber(nuevoSus){
     this._manejadorDeObservadores.agregarObservador(nuevoSus);
@@ -284,7 +287,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track];
+    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track, ServicioExternoAlbumObservator];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 

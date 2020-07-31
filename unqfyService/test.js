@@ -12,8 +12,12 @@ const Playlist = require('./PlayList');
 const Errores = require('./Errores');
 const SpotifyClient = require('./SpotifyClient');
 const MusixMatchClient = require('./MusixMatchClient');
+const ManejadorDeObservadores = require('./ManejadorDeObservadores');
+const ServicioExternoAlbumObservator = require("./ServicioExternoAlbumObservator");
 const spotifyCreds = require('./spotifyCreds.json');
 const fs = require('fs');
+const sinon = require('sinon');
+const { stub } = require('sinon');
 
 function createAndAddArtist(unqfy, artistName, country) {
 
@@ -641,5 +645,24 @@ describe("Usuario tests", () => {
     assert.equal(usuario.getTracksMasEscuchadosDe("fran")[0], track1);
     assert.equal(usuario.getTracksMasEscuchadosDe("fran")[1], track2);
     assert.equal(usuario.getTracksMasEscuchadosDe("fran")[2], track3);
+  })
+})
+
+describe("manejadorDeObservadores tests", () => {
+  let manejadorDeOb;
+  let observador;
+  let mock;
+
+  beforeEach(() => {
+    manejadorDeOb = new ManejadorDeObservadores();
+    observador = new ServicioExternoAlbumObservator();
+    mock = sinon.mock(observador);
+  })
+
+  it('un manejador de observadores puede agregar nuevos agregadores', () => {
+    
+    assert.equal(manejadorDeOb.observadores.length, 0)
+    manejadorDeOb.agregarObservador(stub);
+    assert.equal(manejadorDeOb.observadores.length, 1)
   })
 })

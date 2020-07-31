@@ -1,6 +1,7 @@
 const fs = require('fs'); // necesitado para guardar/cargar unqfy
 const unqmod = require('./unqfy'); // importamos el modulo unqfy
 const NotificationServiceClient = require('./NotificationServiceClient');
+const ServicioExternoAlbumObservator = require('./ServicioExternoAlbumObservator');
 
 function getUNQfy(incluirNotiServiceComoObserver = "true", filename = 'data.json') {
     
@@ -8,10 +9,11 @@ function getUNQfy(incluirNotiServiceComoObserver = "true", filename = 'data.json
     if (fs.existsSync(filename)) {
         unqfy = unqmod.UNQfy.load(filename);
     }else{
-        if("true" == incluirNotiServiceComoObserver){
+        if("true" === incluirNotiServiceComoObserver){
             unqfy = new unqmod.UNQfy()
             notificationClient = new NotificationServiceClient();
-            unqfy.addNewSubscriber(notificationClient)
+            observador = new ServicioExternoAlbumObservator(notificationClient);
+            unqfy.addNewSubscriber(observador);
         }else{
             unqfy = new unqmod.UNQfy();
         }
