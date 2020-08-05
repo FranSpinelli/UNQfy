@@ -2,11 +2,21 @@ let Multiset = require('mnemonist/multi-set');
 
 class Usuario {
 
-    constructor() {
-       this._registroDeCancionesEscuchadas = new Multiset();
+    constructor(nroID, unNombre, unaEdad) {
+       
+        this._id = nroID;
+        this._nombre = unNombre;
+        this._edad = unaEdad; 
+        this._registroDeCancionesEscuchadas = new Multiset();
     }
 
+    get id(){return this._id;}
+    get nombre(){return this._nombre;}
+    get edad(){return this._edad;}
 
+    set nombre(nuevoNombre){this._nombre = nuevoNombre;}
+    set edad(nuevaEdad){this._edad = nuevaEdad;}
+    
     escucharTrack(unaTrack) {
         this._registroDeCancionesEscuchadas.add(unaTrack);
     }

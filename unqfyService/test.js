@@ -36,10 +36,12 @@ function createAndAddTrack(unqfy, albumName, trackName, trackDuraction, trackGen
 
 describe('Add, remove and filter data', function() {
   let unqfy = null;
+  let user;
   this.timeout(10000);
 
   beforeEach(() => {
     unqfy = new libunqfy.UNQfy();
+    user = unqfy.createUser("pepe",21);
   });
 
   it('should add an artist', () => {
@@ -192,6 +194,72 @@ describe('Add, remove and filter data', function() {
 
       assert.equal(error.message, "No existe Track con ID: 200")
     })
+  })
+
+  it('unqfy sabe crear nuevos usuarios', () => {
+
+    let newUser = unqfy.createUser("fran", 20);
+
+    assert.equal(newUser.nombre, "fran");
+    assert.equal(newUser.edad, 20);
+  })
+
+  it('unqfy le puede decir a un usuario que escuche una track', () => {
+
+    createAndAddArtist(unqfy, "lolero", "argentina");
+    createAndAddAlbum(unqfy, 1, "albumDeLolero", 2000);
+    createAndAddTrack(unqfy, 1, "lolTrack", 100, ["lola"]);
+
+    assert.equal(unqfy.getUserListenedTracks(1).length, 0);
+    unqfy.userListenTrack(1,1);
+    assert.equal(unqfy.getUserListenedTracks(1).length, 1);
+  })
+
+  it('unqfy le puede decir a un usuario que escuche una playlist', () => {
+    createAndAddArtist(unqfy, "lolero", "argentina");
+    createAndAddAlbum(unqfy, 1, "albumDeLolero", 2000);
+    createAndAddTrack(unqfy, 1, "lolTrack", 100, ["lola"]);
+    createAndAddTrack(unqfy, 1, "lolTrack2", 100, ["lola"]);
+    createAndAddTrack(unqfy, 1, "lolTrack3", 100, ["lola"]);
+    unqfy.createPlaylist('my playlist', ["lola"], 300);
+    
+    assert.equal(unqfy.getUserListenedTracks(1).length, 0);
+    unqfy.userListenPlaylist(1,'my playlist');
+    assert.equal(unqfy.getUserListenedTracks(1).length, 3);
+  })
+
+  it('unqfy le puede pedir la cantidad de veces que un usuario escucho un tema', () => {
+    createAndAddArtist(unqfy, "lolero", "argentina");
+    createAndAddAlbum(unqfy, 1, "albumDeLolero", 2000);
+    createAndAddTrack(unqfy, 1, "lolTrack", 100, ["lola"]);
+
+    assert.equal(unqfy.getTimesTrackWasListenedByUser(1,1), 0);
+    unqfy.userListenTrack(1,1);
+    assert.equal(unqfy.getTimesTrackWasListenedByUser(1,1), 1);
+    unqfy.userListenTrack(1,1);
+    assert.equal(unqfy.getTimesTrackWasListenedByUser(1,1), 2);
+  })
+
+  it('unqfy le puede pedir el top 3 de temas escuchados por un usuario', () => {
+    createAndAddArtist(unqfy, "lolero", "argentina");
+    createAndAddAlbum(unqfy, 1, "albumDeLolero", 2000);
+    createAndAddTrack(unqfy, 1, "lolTrack", 100, ["lola"]);
+    createAndAddTrack(unqfy, 1, "lolTrack2", 100, ["lola"]);
+    createAndAddTrack(unqfy, 1, "lolTrack3", 100, ["lola"]);
+    createAndAddTrack(unqfy, 1, "lolTrack4", 100, ["lola"]);
+
+    unqfy.userListenTrack(1,1);
+    unqfy.userListenTrack(1,1);
+    unqfy.userListenTrack(1,1);
+
+    unqfy.userListenTrack(1,2);
+    unqfy.userListenTrack(1,2);
+    
+    unqfy.userListenTrack(1,3);
+
+    assert.equal(unqfy.getTrackTopThreeOf(1,"lolero")[0].titulo, "lolTrack");
+    assert.equal(unqfy.getTrackTopThreeOf(1,"lolero")[1].titulo, "lolTrack2");
+    assert.equal(unqfy.getTrackTopThreeOf(1,"lolero")[2].titulo, "lolTrack3");
   })
 });
 

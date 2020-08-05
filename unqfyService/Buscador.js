@@ -15,7 +15,7 @@ class Buscador{
     }
 
     getPlaylistConNombre(unNombre, listaDePlaylistDelSistema){
-        return listaDePlaylistDelSistema.filter(playlist => playlist.nombre.toLowerCase().includes(unNombre.toLowerCase()));
+        return listaDePlaylistDelSistema.filter(playlist => playlist.nombre.toLowerCase().includes(unNombre.toLowerCase()))[0];
     }
 
     getTracksDeArtistaConNombre(unNombre, listaDeArtistasDelSistema){
@@ -47,6 +47,10 @@ class Buscador{
 
     getTrackConID(unID, listaDeArtistas){
         return this.getTracksDelSistema(listaDeArtistas).filter(track => track.id === unID)[0];
+    }
+
+    getUserConID(unID, listaDeUsuarios){
+        return listaDeUsuarios.filter(user => user.id === unID)[0];
     }
 
     getAlbumsDelSistema(listaDeArtistasDelSistema){

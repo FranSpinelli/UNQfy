@@ -5,6 +5,7 @@ class GeneradorDeClaves{
         this._contadorIDAlbum = 0;
         this._contadorIDArtista = 0;
         this._contadorIDPlaylist = 0;
+        this._contadorIDUsuario = 0;
     }
 
     generarClaveDeTrack(){
@@ -25,6 +26,11 @@ class GeneradorDeClaves{
     generarClaveDePlaylist(){
         this._contadorIDPlaylist += 1;
         return this._contadorIDPlaylist;
+    }
+
+    generarClaveDeUsuario(){
+        this._contadorIDUsuario += 1;
+        return this._contadorIDUsuario;
     }
 }
 

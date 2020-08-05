@@ -29,6 +29,7 @@ class UNQfy {
 
     this._artistas = [];
     this._playList = [];
+    this._usuarios  = []; 
   }
 
   //-----------------------------------------------------------------------------------------------------------------------
@@ -120,7 +121,7 @@ class UNQfy {
       }
     }, [])
   }  
-  
+
   eliminarArtista(artistaID){
     let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._artistas);
     if(artistaAEliminar !== undefined){
@@ -206,7 +207,7 @@ class UNQfy {
       artists: this._buscador.getArtistasConNombre(aName, this._artistas),
       albums: this._buscador.getAlbumsConNombre(aName, this._artistas),
       tracks: this._buscador.getTracksConTitulo(aName, this._artistas),
-      playlists: this._buscador.getPlaylistConNombre(aName, this._playList)
+      playlists: [this._buscador.getPlaylistConNombre(aName, this._playList)]
     }
     return dictionary;
   }
@@ -217,6 +218,66 @@ class UNQfy {
 
   getTracksMatchingArtist(artistName) {
     return this._buscador.getTracksDeArtistaConNombre(artistName, this._artistas);
+  }
+  
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--RELACIONADO A USUARIOS-----------------------------------------------------------------------------------------------
+
+  createUser(userName, userAge){
+
+    let newID = this._generadorDeClaves.generarClaveDeUsuario();
+    let newUser = new Usuario(newID, userName, userAge);
+
+    this._usuarios.push(newUser);
+
+    return newUser;
+  }
+
+  userListenTrack(userID, trackID){
+
+    let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
+    let trackConID = this._buscador.getTrackConID(trackID,this._artistas);
+
+    if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
+    if(trackConID === undefined){throw new Errores.NoExisteElementoConID("Track", trackID);}
+
+    usuarioConID.escucharTrack(trackConID);
+  }
+
+  userListenPlaylist(userID, playlistNombre){
+    let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
+    let playlistConNombre = this._buscador.getPlaylistConNombre(playlistNombre, this._playList);
+
+    if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
+    if(playlistConNombre === undefined){throw new Errores.NoExisteElementoConID("Playlist", trackID);}
+
+    usuarioConID.escucharPlaylist(playlistConNombre);
+  }
+
+  getUserListenedTracks(userID){
+    let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
+
+    if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
+
+    return usuarioConID.getTemasEscuchados();
+  }
+
+  getTimesTrackWasListenedByUser(userID, trackID){
+    let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
+    let trackConID = this._buscador.getTrackConID(trackID,this._artistas);
+
+    if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
+    if(trackConID === undefined){throw new Errores.NoExisteElementoConID("Track", trackID);}
+
+    return usuarioConID.getVecesQueEscuchoTema(trackConID);
+  }
+
+  getTrackTopThreeOf(userID, artistName){
+    let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
+
+    if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
+
+    return usuarioConID.getTracksMasEscuchadosDe(artistName);
   }
 
   //-----------------------------------------------------------------------------------------------------------------------
