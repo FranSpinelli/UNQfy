@@ -156,6 +156,15 @@ class UNQfy {
     }
   }
 
+  eliminarPlayList(nombreDePlayList){
+    let playListAEliminar = this._buscador.getPlaylistConNombre(nombreDePlayList, this._playList);
+    if(playListAEliminar === undefined){
+      throw new Errores.NoExisteElementoConID("playlist", nombreDePlayList);
+    }else{
+      this._playList = this._playList.filter(playList => playList.nombre !== nombreDePlayList);
+    }
+  }
+
   //-----------------------------------------------------------------------------------------------------------------------
   //--BUSQUEDAS------------------------------------------------------------------------------------------------------------
 
@@ -348,7 +357,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track, ServicioExternoAlbumObservator];
+    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track, PlayList, ServicioExternoAlbumObservator];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 
