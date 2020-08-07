@@ -16,7 +16,7 @@ class Buscador{
 
     getPlaylistConNombre(unNombre, listaDePlaylistDelSistema){
 
-        return listaDePlaylistDelSistema.filter(playlist => playlist.nombre.toLowerCase().includes(unNombre.toLowerCase()))[0];
+        return listaDePlaylistDelSistema.filter(playlist => playlist.nombre.toLowerCase().includes(unNombre.toLowerCase()));
     }
 
     getTracksDeArtistaConNombre(unNombre, listaDeArtistasDelSistema){

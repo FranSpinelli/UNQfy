@@ -15,6 +15,7 @@ class Track {
     get duracion(){return this._duracion;}
     get albumAlquePertenece(){return this._albumAlquePertenece;}
     get id(){return this._id;}
+    get lyrics(){return this._lyrics;}
 
     getLyrics(unAPIClient){
         if(this._lyrics === undefined){

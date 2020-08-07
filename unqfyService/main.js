@@ -50,6 +50,24 @@ function ejecutarComandoCon(unStringDeComando, unaListaDeArgumentos){
     case "popularAlbumsParaArtista":
       comandos.ComandoPopulateAlbumsForArtist.execute(unaListaDeArgumentos);
       break;
+    case "crearUsuario":
+      comandos.ComandoCreateUser.execute(unaListaDeArgumentos);
+      break;
+    case "escucharTrack":
+      comandos.ComandoListenTrack.execute(unaListaDeArgumentos);
+      break;
+    case "escucharPlayList":
+      comandos.ComandoListenPlayList.execute(unaListaDeArgumentos);
+      break;
+    case "tracksEscuchadasPorUsuario":
+      comandos.ComandoGetUserListenedTracks.execute(unaListaDeArgumentos);
+      break;
+    case "vecesQueUsuarioEscuchoCancion":
+      comandos.ComandoGetTimesTrackWasListenedByUser.execute(unaListaDeArgumentos);
+      break;
+    case "top3DeUsuarioConArtista":
+      comandos.ComandoGetTrackTopThreeOfUser.execute(unaListaDeArgumentos);
+      break;
     default: 
       comandos.ComandoInexistente.execute();
   }
@@ -83,6 +101,13 @@ function main(){
  * getTracksDeArtista unidDeArtista;
  * ----------------------------------------------------------------------------------------
  * popularAlbumsParaArtista idDeUnArtista
+ * ----------------------------------------------------------------------------------------
+ * crearUsuario nombreDeUsuario edad
+ * escucharTrack userID trackID
+ * escucharPlayList userID nombreDePlayList
+ * tracksEscuchadasPorUsuario idUsuario
+ * vecesQueUsuarioEscuchoCancion idUsuario idTrack
+ * top3DeUsuarioConArtista idUsuario nombreDeArtista
  */
 
 main();

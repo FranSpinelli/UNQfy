@@ -70,12 +70,16 @@ class Comando{
         if (listaDeTracks.length > 0){
             let resultado = [];
             listaDeTracks.forEach(track => {
+                let trackLyrics = track.lyrics;
+                if(!trackLyrics){trackLyrics = "Todavia no le ha descargado la letra de la track"}
+
                 let trackMappeada = {
                     titulo: track.titulo,
                     duracion: track.duracion + " segs",
                     generos: track.generosMusicales,
                     album: track.albumAlquePertenece.nombre,
-                    id: track.id 
+                    id: track.id,
+                    lyrics: trackLyrics
                 }
                 resultado.push(trackMappeada);
             });
@@ -296,7 +300,8 @@ class ComandoBuscarPorNombre extends Comando{
         return {
             artistas: super.mapearListaDeArtistas(resultados.artists),
             albums: super.mapearListaDeAlbums(resultados.albums),
-            tracks: super.mapearListaDeTracks(resultados.tracks)
+            tracks: super.mapearListaDeTracks(resultados.tracks),
+            playList: super.mapearListaDePlayList(resultados.playlists)
         }
     }
 }
@@ -338,6 +343,78 @@ class ComandoPopulateAlbumsForArtist extends Comando{
     }
 }
 
+class ComandoCreateUser extends Comando {
+    
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        unaUNQFY.createUser(listaDeParametros[0], listaDeParametros[1]);
+        super.comandoEjecutadoConExito(unaUNQFY);
+    }
+}
+
+class ComandoListenTrack extends Comando {
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try {
+            unaUNQFY.userListenTrack(parseInt(listaDeParametros[0]), parseInt(listaDeParametros[1]));
+            super.comandoEjecutadoConExito(unaUNQFY);
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+
+class ComandoListenPlayList extends Comando {
+
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try {
+            unaUNQFY.userListenPlaylist(parseInt(listaDeParametros[0]), listaDeParametros[1]);
+            super.comandoEjecutadoConExito(unaUNQFY);
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+
+class ComandoGetUserListenedTracks extends Comando {
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try {
+            let cancionesEscuchadas = unaUNQFY.getUserListenedTracks(parseInt(listaDeParametros[0]));
+            console.log(this.mapearListaDeTracks(cancionesEscuchadas));
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+
+class ComandoGetTimesTrackWasListenedByUser extends Comando {
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try {
+            let vecesQueEscuchoCancion = unaUNQFY.getTimesTrackWasListenedByUser(parseInt(listaDeParametros[0]), 
+                parseInt(listaDeParametros[1]));
+
+            console.log(vecesQueEscuchoCancion);
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }    
+}
+
+class ComandoGetTrackTopThreeOfUser extends Comando {
+    static execute(listaDeParametros){
+        let unaUNQFY = getUNQfy();
+        try {
+            let listaTop = unaUNQFY.getTrackTopThreeOf(parseInt(listaDeParametros[0]), listaDeParametros[1]);
+            console.log(this.mapearListaDeTracks(listaTop));
+        } catch (error) {
+            console.log("ERROR: " + error.message);
+        }
+    }
+}
+
 module.exports = {
     ComandoInexistente: ComandoInexistente,
     //-----------------------------------------------
@@ -364,9 +441,14 @@ module.exports = {
     ComandoGetTracksDeArtista: ComandoGetTracksDeArtista,
     //-----------------------------------------------
     ComandoPopulateAlbumsForArtist: ComandoPopulateAlbumsForArtist,
-
+    //-----------------------------------------------
+    ComandoCreateUser: ComandoCreateUser,
+    ComandoListenTrack: ComandoListenTrack,
+    ComandoListenPlayList: ComandoListenPlayList,
+    ComandoGetUserListenedTracks: ComandoGetUserListenedTracks,
+    ComandoGetTimesTrackWasListenedByUser: ComandoGetTimesTrackWasListenedByUser,
+    ComandoGetTrackTopThreeOfUser: ComandoGetTrackTopThreeOfUser,
     //------------------------------------------------
-
     getUNQfy: getUNQfy,
     saveUNQfy: saveUNQfy
 }

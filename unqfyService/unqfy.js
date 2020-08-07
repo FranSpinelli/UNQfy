@@ -17,7 +17,6 @@ const NotificationServiceClient = require('./NotificationServiceClient');
 const ServicioExternoAlbumObservator = require('./ServicioExternoAlbumObservator');
 const { response } = require('express');
 
-
 class UNQfy {
 
   constructor(){
@@ -32,6 +31,7 @@ class UNQfy {
     this._usuarios  = []; 
   }
 
+  get musixMatchClient(){return this._musixMatchClient;}
   //-----------------------------------------------------------------------------------------------------------------------
   //--ACCIONES DE MANEJOS DEL MODELO---------------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ class UNQfy {
   }
 
   eliminarPlayList(nombreDePlayList){
-    let playListAEliminar = this._buscador.getPlaylistConNombre(nombreDePlayList, this._playList);
+    let playListAEliminar = this._buscador.getPlaylistConNombre(nombreDePlayList, this._playList)[0];
     if(playListAEliminar === undefined){
       throw new Errores.NoExisteElementoConID("playlist", nombreDePlayList);
     }else{
@@ -216,7 +216,7 @@ class UNQfy {
       artists: this._buscador.getArtistasConNombre(aName, this._artistas),
       albums: this._buscador.getAlbumsConNombre(aName, this._artistas),
       tracks: this._buscador.getTracksConTitulo(aName, this._artistas),
-      playlists: [this._buscador.getPlaylistConNombre(aName, this._playList)]
+      playlists: this._buscador.getPlaylistConNombre(aName, this._playList)
     }
     return dictionary;
   }
@@ -249,17 +249,17 @@ class UNQfy {
 
     if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
     if(trackConID === undefined){throw new Errores.NoExisteElementoConID("Track", trackID);}
-
+    
     usuarioConID.escucharTrack(trackConID);
   }
 
   userListenPlaylist(userID, playlistNombre){
     let usuarioConID = this._buscador.getUserConID(userID, this._usuarios);
-    let playlistConNombre = this._buscador.getPlaylistConNombre(playlistNombre, this._playList);
+    let playlistConNombre = this._buscador.getPlaylistConNombre(playlistNombre, this._playList)[0];
 
     if(usuarioConID === undefined){throw new Errores.NoExisteElementoConID("Usuario", userID);}
-    if(playlistConNombre === undefined){throw new Errores.NoExisteElementoConID("Playlist", trackID);}
-
+    if(playlistConNombre === undefined){throw new Errores.NoExisteElementoConID("Playlist", playlistNombre);}
+    
     usuarioConID.escucharPlaylist(playlistConNombre);
   }
 
@@ -357,7 +357,7 @@ class UNQfy {
   static load(filename) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track, PlayList, ServicioExternoAlbumObservator];
+    const classes = [UNQfy, Map, NotificationServiceClient, ManejadorDeObservadores, Buscador, GeneradorDeClaves, MusixMatchClient, SpotifyClient, Artista, Album, Track, PlayList, Usuario, ServicioExternoAlbumObservator];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 
