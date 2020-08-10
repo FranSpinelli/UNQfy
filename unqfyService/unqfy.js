@@ -33,7 +33,7 @@ class UNQfy {
 
   get musixMatchClient(){return this._musixMatchClient;}
   //-----------------------------------------------------------------------------------------------------------------------
-  //--ACCIONES DE MANEJOS DEL MODELO---------------------------------------------------------------------------------------
+  //--AGREGADOS------------------------------------------------------------------------------------------------------------
 
   addArtist(artistData) {
       if(this._buscador.hayArtistaConData(artistData,this._artistas)){
@@ -122,6 +122,46 @@ class UNQfy {
     }, [])
   }  
 
+  crearPlaylistConTracksConID(nombre, listaDeIDdeTracks){
+    if(!this._playList.some(playlist => playlist.nombre === nombre)){
+      let listaDeTracks = this.generarListaDeTracksAPartirDeListaDeID(listaDeIDdeTracks);
+      let nuevoIDParaPlaylist = this._generadorDeClaves.generarClaveDePlaylist();
+      let generos = this.getTodosLosGeneros(listaDeTracks);
+      let duracion = listaDeTracks.map(track => track.duracion).reduce((acumulador, actual) => {return acumulador + actual}, 0);
+
+      let nuevaPlaylist = new PlayList(nombre,nuevoIDParaPlaylist, duracion,generos,listaDeTracks);
+      this._playList.push(nuevaPlaylist);
+      return nuevaPlaylist;
+    }else{
+      throw new Errores.ElementoExistenteConMismoNombre(nombre, "una playlist", "el sistema");
+    }
+  }
+
+  generarListaDeTracksAPartirDeListaDeID(listaDeIDdeTracks){
+    
+    let listaDeTracks = [];
+    listaDeIDdeTracks.forEach(id => {
+      let trackConID = this._buscador.getTrackConID(id,this._artistas);
+        if(trackConID === undefined){
+          throw new Errores.NoExisteElementoConID("track", id);
+        }else{
+          listaDeTracks.push(trackConID);
+        }  
+    });
+    return listaDeTracks;
+  }
+
+  getTodosLosGeneros(listaDeTracks){
+
+    let listaDeGenerosConRepetidos = listaDeTracks.map(track => track.generosMusicales).flat();
+    return listaDeGenerosConRepetidos.filter(function(genero, pos) {
+      return listaDeGenerosConRepetidos.indexOf(genero) == pos;
+    })
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------------
+  //--ELIMINADOS-----------------------------------------------------------------------------------------------------------
+
   eliminarArtista(artistaID){
     let artistaAEliminar = this._buscador.getArtistaConID(artistaID, this._artistas);
     if(artistaAEliminar !== undefined){
@@ -209,6 +249,15 @@ class UNQfy {
 
   getPlayLists(){
     return this._playList;
+  }
+
+  getPlayListConID(unID){
+    let playlist = this._buscador.getPlayListConID(unID, this._playList);
+    if (playlist === undefined){
+      throw new Errores.NoExisteElementoConID("PlayList", unID)
+    }else{
+      return playlist;
+    }
   }
 
   searchByName(aName){

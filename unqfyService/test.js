@@ -87,7 +87,64 @@ describe('Add, remove and filter data', function() {
     });
 
   })
+
+  it('unqfy puede generarUnaListaDeTracks a partir de una lista de ids ', () => {
+    const artist1 =createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
+    const album1 = createAndAddAlbum(unqfy, artist1.id, 'Roses Album', 1987);
+    const track1 = createAndAddTrack(unqfy, album1.id, 'track1', 200, ['pop', 'movie']);
+    const track2 = createAndAddTrack(unqfy, album1.id, 'track2', 200, ['pop', 'movie']);
+    const track3 = createAndAddTrack(unqfy, album1.id, 'track3', 200, ['pop', 'movie']);
+    const listaDeID = [track1.id, track2.id, track3.id];
+
+    const listaDeTracks = unqfy.generarListaDeTracksAPartirDeListaDeID(listaDeID);
+
+    assert.isTrue(listaDeTracks.some(track => track.id === track1.id));
+    assert.isTrue(listaDeTracks.some(track => track.id === track2.id));
+    assert.isTrue(listaDeTracks.some(track => track.id === track3.id));
+  })
+
+  it('unqfy puede darte todos los generos sin repetidos de una lista de tracks', () => {
+    const artist1 =createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
+    const album1 = createAndAddAlbum(unqfy, artist1.id, 'Roses Album', 1987);
+    const track1 = createAndAddTrack(unqfy, album1.id, 'track1', 200, ['pop', 'movie']);
+    const track2 = createAndAddTrack(unqfy, album1.id, 'track2', 200, ['pop', 'rock']);
+    const track3 = createAndAddTrack(unqfy, album1.id, 'track3', 200, ['pop', 'movie', 'rock', 'disco']);
+
+    const listaDeTracks = [track1, track3, track2];
+
+    const listaDeGeneros = unqfy.getTodosLosGeneros(listaDeTracks);
+
+    assert.equal(listaDeGeneros.length, 4);
+  })
+
+  it('unqfy puede crear una playlist a partir de un nombre de playlist y una lista de id de track', () => {
+    const artist1 =createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
+    const album1 = createAndAddAlbum(unqfy, artist1.id, 'Roses Album', 1987);
+    const track1 = createAndAddTrack(unqfy, album1.id, 'track1', 200, ['pop', 'movie']);
+    const track2 = createAndAddTrack(unqfy, album1.id, 'track2', 200, ['pop', 'rock']);
+    const track3 = createAndAddTrack(unqfy, album1.id, 'track3', 200, ['pop', 'movie', 'rock', 'disco']);
+
+    const playListCreada = unqfy.crearPlaylistConTracksConID('miPlay', [1,2,3]);
+
+    assert.equal(playListCreada.nombre, 'miPlay');
+    assert.equal(playListCreada.duracion, 600);
+    assert.equal(playListCreada.genero.length, 4);
+    assert.equal(playListCreada.tracks.length, 3);
+  })
   
+  it(' unqfy levanta error si le pido crear una playlist a partir de una lista de id y en la lista hay un id no registrado', () => {
+      
+    assert.throws( () => {
+      const artist1 =createAndAddArtist(unqfy, 'Guns n\' Roses', 'USA');
+      const album1 = createAndAddAlbum(unqfy, artist1.id, 'Roses Album', 1987);
+      const track1 = createAndAddTrack(unqfy, album1.id, 'track1', 200, ['pop', 'movie']);
+      const track2 = createAndAddTrack(unqfy, album1.id, 'track2', 200, ['pop', 'rock']);
+      unqfy.generarListaDeTracksAPartirDeListaDeID([1,2,3]);
+    }, 
+    Errores.NoExisteElementoConID, 
+    "No existe track con ID: 3")
+  })
+
   it('si se quiere agregar un album a un artista que no existe, levanta error', () => {
       
     assert.throws( () => {createAndAddAlbum(unqfy, 2, 'Roses Album', 1987);}, Errores.NoExisteElementoConID, 

@@ -50,6 +50,10 @@ class Buscador{
         return this.getTracksDelSistema(listaDeArtistas).filter(track => track.id === unID)[0];
     }
 
+    getPlayListConID(unID, listaDePlayLists){
+        return listaDePlayLists.find(playlist => playlist.idPlayList === unID);
+    }
+
     getUserConID(unID, listaDeUsuarios){
         return listaDeUsuarios.filter(user => user.id === unID)[0];
     }
