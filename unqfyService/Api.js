@@ -2,6 +2,7 @@ const funciones = require('./Comandos.js');
 const bodyParser = require('body-parser');
 const ErroresApi = require('./ErroresApi');
 const Errores = require('./Errores');
+const deepEqual = require('deep-equal');
 const errorHandler = require('./ApiErrorHandler');
 
 let agregarNotificationServiceClientComoObservador = process.argv[2];
@@ -157,23 +158,40 @@ playlists.route('/playlists')
     let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
     let playlists = unqfy.getPlayLists();
     
-    let lista1 = [];
-    let lista2 = [];
-    let lista3 = [];
+    let listaPlayListsConNombre;
+    let listaPlayListsConDuracionMenorA;
+    let listaPlayListsConDuracionMayorA;
 
-    if(req.query.name !== undefined) {lista1 = unqfy.searchByName(req.query.name).playlists}
-    if(req.query.durationLT !== undefined) {lista2 = playlists.filter(playlist => playlist.duracion < (req.query.durationLT))}
-    if(req.query.durationGT !== undefined) {lista3 = playlists.filter(playlist => playlist.duracion > (req.query.durationGT))}
+    if(req.query.name !== undefined) {listaPlayListsConNombre = unqfy.searchByName(req.query.name).playlists}
+    if(req.query.durationLT !== undefined) {listaPlayListsConDuracionMenorA = playlists.filter(playlist => playlist.duracion < (req.query.durationLT))}
+    if(req.query.durationGT !== undefined) {listaPlayListsConDuracionMayorA = playlists.filter(playlist => playlist.duracion > (req.query.durationGT))}
 
-    let responseData = intersectionOfLists(lista1, lista2, lista3);
-    res.status(200).json(responseData);
+    let responseData = intersectionOfLists(listaPlayListsConNombre, listaPlayListsConDuracionMenorA, listaPlayListsConDuracionMayorA);
+    res.status(200).json(responseData.map(playlist => returnedPlayList(playlist)));
 }).post((req, res) =>{
     
-    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
-    let nuevaPlaylist = unqfy.createPlaylist(req.body.name, req.body.genres, req.body.maxDuration);
-    funciones.saveUNQfy(unqfy);
+    if(req.body.tracks === undefined){
+        
+        let nuevaPlaylist = crearPlayListAPartirDeGenerosYDuracion(req);
+        res.status(200).json(returnedPlayList(nuevaPlaylist));
+    }else{
+        if(req.body.name === undefined){
+            throw new ErroresApi.MissingValue();
+        }
 
-    res.status(200).json(nuevaPlaylist);
+        try{
+            
+            let nuevaPlaylist = crearPlayListAPartirDeListaDeTracks(req);
+            res.status(200).json(returnedPlayList(nuevaPlaylist));
+        }catch(err){
+            if(err instanceof Errores.NoExisteElementoConID){
+                throw new ErroresApi.InexistentRelatedSource;
+            }else{
+                throw err;
+            }
+        }
+    }
+    
 });
 
 //--------------------------------------------------------------------------------------
@@ -189,14 +207,7 @@ rootApp.listen(port, () => console.log('where magic happens'));
 
 function returnedArtist(unArtista){
 
-    let albums = unArtista.albums.map(album =>{
-        return {
-            name: album.nombre, 
-            id: album.id,
-            year: album.añoDeLanzamiento,
-            tracks: album.tracks
-        }
-    })
+    let albums = unArtista.albums.map(album => returnedAlbum(album));
 
     return {
         id: unArtista.id,
@@ -205,17 +216,13 @@ function returnedArtist(unArtista){
         country: unArtista.pais
     }
 }
-function artistMissingValueChecking(request){
-    if(request.body.name === undefined || request.body.country === undefined){
-        throw new ErroresApi.MissingValue()
-    }
-}
 
 function returnedAlbum(unAlbum){
     
     let tracks = unAlbum.tracks.map(track => {
         return{
-            title: track.titulo
+            title: track.titulo,
+            duration: track.duracion
         }
     })
 
@@ -224,6 +231,30 @@ function returnedAlbum(unAlbum){
         id: unAlbum.id,
         year: unAlbum.añoDeLanzamiento,
         tracks: tracks
+    }
+}
+
+function returnedPlayList(unaPlayList){
+    
+    let listaTracks = unaPlayList.tracks.map(track => {
+        return {
+            title: track.titulo,
+            duration: track.duracion
+        }
+    })
+
+    return {
+        id: unaPlayList.idPlayList,
+        name: unaPlayList.nombre,
+        duration:unaPlayList.duracion,
+        genres: unaPlayList.genero,
+        tracks: listaTracks
+    }
+}
+
+function artistMissingValueChecking(request){
+    if(request.body.name === undefined || request.body.country === undefined){
+        throw new ErroresApi.MissingValue()
     }
 }
 
@@ -240,6 +271,40 @@ function playlistsMissingValueChecking(request){
     }
 }
 
+function playlistsMissingValueCheckingForPost(request){
+    if(request.body.name === undefined || request.body.genres === undefined || request.body.maxDuration === undefined){
+        throw new Error.MissingValue();
+    }
+}
+
 function intersectionOfLists(){
-    return Array.from(arguments).reduce((a, b) => a.filter(c => b.includes(c)));
+
+    let listaSinUndefineds = Array.from(arguments).filter(lista => lista !== undefined)
+    let listaMasLarga = listaSinUndefineds.sort((a, b) => b.length - a.length).splice(0,1).flat();
+
+    return listaMasLarga.filter(playlist => aparecePlayListEnTodasLasListas(playlist,listaSinUndefineds));
+}
+
+function aparecePlayListEnTodasLasListas(playlist,listaDeListas){
+
+    const contienePlayList = (unaPlayList, unaLista) => unaLista.some(playL => deepEqual(unaPlayList,playL,true));
+
+    return listaDeListas.every(lista => contienePlayList(playlist, lista));
+}
+
+function crearPlayListAPartirDeGenerosYDuracion(req){
+    playlistsMissingValueCheckingForPost(req);
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
+    let nuevaPlaylist = unqfy.createPlaylist(req.body.name, req.body.genres, parseInt(req.body.maxDuration));
+    funciones.saveUNQfy(unqfy);
+
+    return nuevaPlaylist;
+}
+
+function crearPlayListAPartirDeListaDeTracks(req){
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
+    let nuevaPlaylist = unqfy.crearPlaylistConTracksConID(req.body.name, req.body.tracks);
+    funciones.saveUNQfy(unqfy);
+    
+    return nuevaPlaylist;
 }
