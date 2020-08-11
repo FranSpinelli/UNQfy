@@ -194,6 +194,22 @@ playlists.route('/playlists')
     
 });
 
+playlists.route('/playlists/:id')
+.get((req, res) => {
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
+    let playlist = unqfy.getPlayListConID(parseInt(req.params.id));
+
+    res.status(200).json(returnedPlayList(playlist));
+}).delete((req,res) => {
+    let unqfy = funciones.getUNQfy(agregarNotificationServiceClientComoObservador);
+    let playListAEliminar = unqfy.getPlayListConID(parseInt(req.params.id));
+    unqfy.eliminarPlayList(playListAEliminar.nombre);
+    
+    funciones.saveUNQfy(unqfy);
+
+    res.sendStatus(204);
+})
+
 //--------------------------------------------------------------------------------------
 rootApp.use('/api', artists, albums, tracks,playlists);
 rootApp.use(function(req,res){
