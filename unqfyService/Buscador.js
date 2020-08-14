@@ -39,15 +39,15 @@ class Buscador{
     }
 
     getArtistaConID(unID, listaDeArtistas){
-        return listaDeArtistas.filter( artista => artista.id === unID)[0];
+        return listaDeArtistas.find( artista => artista.id === unID);
     }
 
     getAlbumConID(unID, listaDeArtistas){
-        return this.getAlbumsDelSistema(listaDeArtistas).filter(album => album.id === unID)[0];
+        return this.getAlbumsDelSistema(listaDeArtistas).find(album => album.id === unID);
     }
 
     getTrackConID(unID, listaDeArtistas){
-        return this.getTracksDelSistema(listaDeArtistas).filter(track => track.id === unID)[0];
+        return this.getTracksDelSistema(listaDeArtistas).find(track => track.id === unID);
     }
 
     getPlayListConID(unID, listaDePlayLists){
@@ -55,7 +55,7 @@ class Buscador{
     }
 
     getUserConID(unID, listaDeUsuarios){
-        return listaDeUsuarios.filter(user => user.id === unID)[0];
+        return listaDeUsuarios.find(user => user.id === unID);
     }
 
     getAlbumsDelSistema(listaDeArtistasDelSistema){
