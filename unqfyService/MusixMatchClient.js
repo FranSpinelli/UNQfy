@@ -1,14 +1,19 @@
 const rp = require('request-promise');
 
 class MusixMatchClient{
+
+    constructor(){
+        this._baseURL = 'http://' + 'api.musixmatch.com' + '/ws' + '/1.1';
+        this._apiKey = '2d0fce8e9efeee8607bd778887fe9858';
+    }   
     
     getTrackLyrics(nombreDeTrack, nombreArtista){
         return this.getTrackID(nombreDeTrack, nombreArtista).then((response) => {
 
             let options = {
-                uri: 'http://api.musixmatch.com/ws/1.1/track.lyrics.get',
+                uri: this._baseURL + '/track.lyrics.get',
                 qs: {
-                    apikey: '2d0fce8e9efeee8607bd778887fe9858',
+                    apikey: this._apiKey,
                     track_id: response.message.body.track_list[0].track.track_id
                 },
                 json: true
@@ -20,9 +25,9 @@ class MusixMatchClient{
 
     getTrackID(unNombreDeTrack, unNombreDeArtista){
         let options = {
-            uri: 'http://api.musixmatch.com/ws/1.1/track.search',
+            uri: this._baseURL + '/track.search',
             qs: {
-                apikey: '2d0fce8e9efeee8607bd778887fe9858',
+                apikey: this._apiKey,
                 q_track: unNombreDeTrack,
                 q_artist: unNombreDeArtista,
                 f_has_lyrics: true,

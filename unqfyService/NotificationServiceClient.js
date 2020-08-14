@@ -1,10 +1,9 @@
 const rp = require('request-promise');
-const UNQfyObservator = require('./UNQfyObservator');
 
-class NotificationServiceClient extends UNQfyObservator{
+class NotificationServiceClient {
 
     constructor(){
-        super(true,true)
+
         //this._baseURL = 'http://' + '172.20.0.22' + ':' + '8090' + '/api';
         this._baseURL = 'http://' + 'localhost' + ':' + '8090' + '/api';
     }
