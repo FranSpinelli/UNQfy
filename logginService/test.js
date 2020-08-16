@@ -22,7 +22,7 @@ describe("loggingService tests",() => {
         return servicioDeLoggin.loggearSucesoLocalmente('Un log').then((res) => {
 
             assert.isTrue(fs.existsSync('./logs.txt'));
-            assert.equal(fs.readFileSync('./logs.txt'), 'Un log');
+            assert.isTrue(fs.readFileSync('./logs.txt').includes('Un log'));
         })
     })
 
@@ -33,11 +33,11 @@ describe("loggingService tests",() => {
         return servicioDeLoggin.loggearSucesoLocalmente('Un log').then((res) => {
 
             assert.isTrue(fs.existsSync('./logs.txt'));
-            assert.equal(fs.readFileSync('./logs.txt'), 'Un log');
+            assert.isTrue(fs.readFileSync('./logs.txt').includes('Un log'));
 
            return servicioDeLoggin.loggearSucesoLocalmente(' Un log').then((re) => {   
                 assert.isTrue(fs.existsSync('./logs.txt'));
-                assert.equal(fs.readFileSync('./logs.txt'), 'Un log Un log');
+                assert.isTrue(fs.readFileSync('./logs.txt').includes('Un log'));
            });
         })
     })
