@@ -16,7 +16,7 @@ class NotificationServiceClient {
         };
         
         rp(options).catch( error => {
-            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de notificaciones aparecera ahi");
         });
     }
 
@@ -28,7 +28,7 @@ class NotificationServiceClient {
         };
         
         rp(options).catch( error => {
-            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de notificaciones aparecera ahi");
         });
     }
 
@@ -48,7 +48,7 @@ class NotificationServiceClient {
         };
         
         rp(options).catch( error => {
-            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de logging aparecera ahi");
+            console.log("hubo un error relacionado con el servicio de notificaciones, cuando se implemente el servicio de notificaciones aparecera ahi");
         })
     }
 }

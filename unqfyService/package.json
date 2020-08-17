@@ -22,6 +22,6 @@
     "test": "mocha",
     "eslint": "node_modules/.bin/eslint *.js"
   },
-  "author": "",
+  "author": "Francisco Svrznjak Spinelli",
   "license": "ISC"
 }
