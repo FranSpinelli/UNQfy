@@ -39,6 +39,11 @@ class UNQfy {
 
   addArtist(artistData) {
       if(this._buscador.hayArtistaConData(artistData,this._artistas)){
+        let jsonOBJ = {
+          loggMessage : "Se intento agregar un artista " + artistData.name + " el cual ya existe en el sistema"
+        };
+
+        this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
         throw new Errores.ElementoDuplicado("Artista")
       }else{
         let nuevoID = this._generadorDeClaves.generarClaveDeArtista();
@@ -65,10 +70,18 @@ class UNQfy {
   addAlbum(artistId, albumData) {
     let artistaConID = this._buscador.getArtistaConID(artistId, this._artistas);
     if(artistaConID === undefined){
+      let jsonOBJ = {
+        loggMessage : "Se intento agregar un album " + albumData.name + " a un artista inexistente en el sistema"
+      };
 
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.NoExisteElementoConID("artista", artistId);
     }else if(albumData.year > new Date().getFullYear()){
+      let jsonOBJ = {
+        loggMessage : "Se intento agregar un album " + albumData.name + " con fecha invalida"
+      };
 
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.FechaInvalida("del album");
     }else{
 
@@ -103,6 +116,11 @@ class UNQfy {
       this._manejadorDeObservadores.updateDeAgregadoDeTrack(jsonOBJ)
       return nuevoTrack;
     }else{
+      let jsonOBJ = {
+        loggMessage : "Se intento agregar una track " + trackData.name + " a un album inexistente en el sistema"
+      };
+
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.NoExisteElementoConID("album", albumId);
     }
   }
@@ -189,6 +207,11 @@ class UNQfy {
 
       this._manejadorDeObservadores.updateDeEliminadoDeArtista(jsonOBJ)
     }else{
+      let jsonOBJ = {
+        loggMessage : "Se intento eliminar un artista con un id inexistente en el sistema"
+      };
+
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.NoExisteElementoConID("artista", artistaID);
     }
   }
@@ -206,6 +229,11 @@ class UNQfy {
 
       this._manejadorDeObservadores.updateDeEliminadoDeAlbum(jsonOBJ);
     }else{
+      let jsonOBJ = {
+        loggMessage : "Se intento eliminar un album con un id inexistente en el sistema"
+      };
+
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.NoExisteElementoConID("album", albumID);
     }
   }
@@ -224,6 +252,11 @@ class UNQfy {
 
       this._manejadorDeObservadores.updateDeEliminadoDeTrack(jsonOBJ)
     }else{
+      let jsonOBJ = {
+        loggMessage : "Se intento eliminar un track con un id inexistente en el sistema"
+      };
+
+      this._manejadorDeObservadores.updateErrorDeModelo(jsonOBJ);
       throw new Errores.NoExisteElementoConID("track", trackID);
     }
   }

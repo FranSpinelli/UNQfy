@@ -33,6 +33,10 @@ class ManejadorDeObservadores{
     updateDeEliminadoDeTrack(jsOBJ){
         this._observadores.forEach(observador => observador.updatear("EliminadoDeTrack", jsOBJ));
     }
+
+    updateErrorDeModelo(jsOBJ){
+        this._observadores.forEach(observador => observador.updatear("ErrorDeModelo", jsOBJ));
+    }
 }
 
 module.exports = ManejadorDeObservadores

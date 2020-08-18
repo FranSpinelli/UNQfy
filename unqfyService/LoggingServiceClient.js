@@ -36,6 +36,21 @@ class LoggingServiceClient {
             console.log("hubo un error relacionado con el servicio de logging, cuando se implemente el servicio de notificaciones aparecera ahi");
         });
     }
+
+    loggearError(unLogg){
+        let options = {
+            method: 'POST',
+            uri: this._baseURL + '/logg/error',
+            json: true ,
+            body: {
+                message: unLogg
+            }
+        };
+        
+        rp(options).catch( error => {
+            console.log("hubo un error relacionado con el servicio de logging, cuando se implemente el servicio de notificaciones aparecera ahi");
+        });
+    }
 }
 
 

@@ -12,6 +12,8 @@ class SucesosEnUNQfyObservator extends UNQfyObservator{
             this._cliente.loggearAgregado(objetoJSON.loggMessage);
         }else if(string === "EliminadoDeArtista" || string === "EliminadoDeAlbum" || string === "EliminadoDeTrack"){
             this._cliente.loggearEliminado(objetoJSON.loggMessage);
+        }else if(string === "ErrorDeModelo"){
+            this._cliente.loggearError(objetoJSON.loggMessage);
         }
     }
 }
