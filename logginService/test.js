@@ -2,6 +2,7 @@ const fs = require('fs');
 const assert = require('chai').assert;
 
 const loggingService = require('./LoggingService');
+const logglyClient = require('./LogglyClient');
 
 describe("loggingService tests",() => {
 
@@ -40,5 +41,28 @@ describe("loggingService tests",() => {
                 assert.isTrue(fs.readFileSync('./logs.txt').includes('Un log'));
            });
         })
+    })
+})
+
+describe("loggingService tests",() => {
+    let logglyC;
+
+    beforeEach(() => {
+        logglyC = new logglyClient();        
+    })
+
+    it("El logglyClient puede registrar en loggly info loggs", () => {
+
+        logglyC.loggearInfoLogRemotamente('UN INFO LOG DE PRUEBA');
+    });
+
+    it("El logglyClient puede registrar en loggly error loggs", () => {
+
+        logglyC.loggearErrorLogRemotamente('UN ERROR LOG DE PRUEBA');
+    })
+
+    it("El logglyClient puede registrar en loggly warning loggs", () => {
+
+        logglyC.loggearWarningLogRemotamente('UN WARNING LOG DE PRUEBA');
     })
 })

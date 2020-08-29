@@ -1,5 +1,8 @@
 const loggingMod = require('./LoggingService');
+const logglyMod = require('./LogglyClient');
+
 const loggingService = new loggingMod();
+const logglyClient = new logglyMod();
 
 //const errorHandler = require('./ErrorHandler');
 const bodyParser = require('body-parser');
@@ -20,6 +23,7 @@ router.get('/', (req,res) => {
 router.post('/logg/addition', (req, res) => {
    let logg = 'INFO: ' + req.body.message; 
    loggingService.loggearSucesoLocalmente(logg);
+   logglyClient.loggearInfoLogRemotamente(req.body.message); 
 
    res.sendStatus(201);
 })
@@ -27,13 +31,15 @@ router.post('/logg/addition', (req, res) => {
 router.post('/logg/removal', (req,res) => {
     let logg = 'WARNING: ' + req.body.message; 
     loggingService.loggearSucesoLocalmente(logg);
- 
+    logglyClient.loggearWarningLogRemotamente(req.body.message);
+
     res.sendStatus(201);
 })
 
 router.post('/logg/error', (req,res) => {
     let logg = 'ERROR: ' + req.body.message; 
     loggingService.loggearSucesoLocalmente(logg);
+    logglyClient.loggearErrorLogRemotamente(req.body.message);
  
     res.sendStatus(201);
 })
