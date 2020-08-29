@@ -31,6 +31,13 @@ router.post('/logg/removal', (req,res) => {
     res.sendStatus(201);
 })
 
+router.post('/logg/error', (req,res) => {
+    let logg = 'ERROR: ' + req.body.message; 
+    loggingService.loggearSucesoLocalmente(logg);
+ 
+    res.sendStatus(201);
+})
+
 //---------------------------------------------------------------------------------
 
 app.use('/api', router);
