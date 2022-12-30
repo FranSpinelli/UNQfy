@@ -9,7 +9,7 @@
   "author": "Francisco Svrznjak Spinelli",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "^8.0.1"
+    "mocha": "^8.4.0"
   },
   "dependencies": {
     "chai": "^4.2.0",
